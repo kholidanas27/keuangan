@@ -1,37 +1,54 @@
 @extends('layouts.app')
 @section('content')
+@if(session('success'))
+<div class="alert alert-success" role="alert">
+    <strong>Berhasil!</strong> {{session('success')}}
+</div>
+@elseif(session('update'))
+<div class="alert alert-warning" role="alert">
+    <strong>Berhasil!</strong> {{session('update')}}
+</div>
+@elseif(session('delete'))
+<div class="alert alert-danger" role="alert">
+    <strong>Berhasil!</strong> {{session('delete')}}
+</div>
+@elseif(session('status'))
+<div class="alert alert-success" role="alert">
+    <strong>Berhasil!</strong> {{session('status')}}
+</div>
+@endif
 <div class="row">
-	<!-- ICON BG-->
-	<div class="col-lg-4 col-md-6 col-sm-6">
-		<div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-			<div class="card-body text-center"><i class="i-Add-User"></i>
-				<div class="content">
-					<p class="text-muted">Kas Masuk</p>
-					<p class="text-primary">{{"Rp " . number_format($kas_masuk,2,',','.') }}</p>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-4 col-md-6 col-sm-6">
-		<div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-			<div class="card-body text-center"><i class="i-Financial"></i>
-				<div class="content">
-					<p class="text-muted">Kas Keluar</p>
-					<p class="text-primary">{{"Rp ". number_format($kas_keluar,2,',','.') }}</p>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-4 col-md-6 col-sm-6">
-		<div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-			<div class="card-body text-center"><i class="i-Money-2"></i>
-				<div class="content">
-					<p class="text-muted">Saldo Kas</p>
-					<p class="text-primary">{{"Rp " . number_format($saldo_kas,2,',','.') }}</p>
-				</div>
-			</div>
-		</div>
-	</div>
+    <!-- ICON BG-->
+    <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+            <div class="card-body text-center"><i class="i-Add-User"></i>
+                <div class="content">
+                    <p class="text-muted">Kas Masuk</p>
+                    <p class="text-primary">{{"Rp " . number_format($total_masuk,2,',','.') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+            <div class="card-body text-center"><i class="i-Financial"></i>
+                <div class="content">
+                    <p class="text-muted">Kas Keluar</p>
+                    <p class="text-primary">{{"Rp ". number_format($total_keluar,2,',','.') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+            <div class="card-body text-center"><i class="i-Money-2"></i>
+                <div class="content">
+                    <p class="text-muted">Saldo Kas</p>
+                    <p class="text-primary">{{"Rp " . number_format($total,2,',','.') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="row">
     <div class="col-lg-12 col-md-12">
@@ -50,7 +67,7 @@
                         <h3>Arus Kas</h3>
                     </div>
                     <div class="col-md-0">
-                        <a href="#"><button class="btn btn-primary custom-btn btn-sm ml-5" type="button" data-toggle="modal" data-target="#exampleModal" name="create_record" id="create_record">Tambah Data</button></a>
+                        <a href="#"><button class="btn btn-primary custom-btn btn-sm ml-5" type="button" data-toggle="modal" data-target="#arusModal" name="create_record" id="create_record">Tambah Data</button></a>
                     </div>
                 </div>
             </div>
@@ -97,8 +114,8 @@
                                 <img src="{{ asset('img/keuangan/'. $k->foto ) }}" width="150" height="100" alt="">
                             </td>
                             <td>
-                                <a class="ul-link-action text-success" data-toggle="tooltip" href="#" data-placement="top" title="Edit"><i class="i-Edit"></i>
-                                    <a class="ul-link-action text-danger mr-1 delete" href="#" data-toggle="tooltip" data-placement="top" title="Want To Delete !!!">
+                                <a class="ul-link-action text-success" type="button" data-toggle="modal" data-target="#arusEditModal{{ $k->id }}" name="create_record" id="create_record" href="#" data-placement="top" title="Edit"><i class="i-Edit"></i>
+                                    <a class="ul-link-action text-danger mr-1 delete" href="{{ route('tenant.hapusArus-id', $k->id) }}" data-toggle="tooltip" data-placement="top" title="Want To Delete !!!">
                                         <i class="i-Eraser-2"></i></a>
                             </td>
                         </tr>
@@ -127,7 +144,7 @@
                         <h3>Laba Rugi</h3>
                     </div>
                     <div class="col-md-0">
-                        <a href="#"><button class="btn btn-primary custom-btn btn-sm ml-5">Tambah Data</button></a>
+                        <a href="#"><button class="btn btn-primary custom-btn btn-sm ml-5" type="button" data-toggle="modal" data-target="#labaModal" name="create_record" id="create_record">Tambah Data</button></a>
                     </div>
                 </div>
             </div>
@@ -170,15 +187,17 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- MODAL ARUS KAS -->
+<!-- FORM INPUT -->
+<div class="modal fade" id="arusModal" tabindex="-1" role="dialog" aria-labelledby="arusModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Tambah Data Arus Kas</h5>
+                <h5 class="modal-title" id="arusModalLabel">Tambah Data Arus Kas</h5>
                 <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
-                <form method="post" id="sample_form" action="{{route('tenant.store')}}" enctype="multipart/form-data">
+                <form method="post" id="sample_form" action="{{ route('tenant.storeArus')}} " enctype="multipart/form-data">
                     @csrf
 
                     <div class="form-group">
@@ -253,6 +272,152 @@
         </div>
     </div>
 </div>
+<!-- END FORM INPUT -->
+<!-- FORM EDIT -->
+@foreach($keuangan as $k)
+<div class="modal fade" id="arusEditModal{{ $k->id }}" tabindex="-1" role="dialog" aria-labelledby="arusEditModalLabel{{ $k->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="arusEditModalLabel{{ $k->id }}">Edit Data Arus Kas</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{{ route('tenant.updateArus-id', $k->id )}}" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    {{ method_field('PUT') }}
+
+                    <div class="form-group">
+                        <label class="control-lable">Keterangan</label>
+                        <input class="form-control" type="text" value="{{ $k->keterangan }}" placeholder="Keterangan...." name="keterangan" id="keterangan">
+                        {{ $errors->first('keterangan')}}
+                    </div>
+                    <div class="form-group">
+                        <label class="control-lable">Jenis</label>
+                        <select class="form-control @error('jenis') is-invalid @enderror" name="jenis" id="jenis" required>
+                            <option selected="" disabled="">Pilih Jenis</option>
+                            <option value="{{ $k->id  }}" {{($k->id) ? 'selected' : ''}}>Pemasukan</option>
+                            <option value="{{ $k->id  }}" {{($k->id) ? 'selected' : ''}}>Pengeluaran</option>
+                        </select>
+                        {{ $errors->first('jenis')}}
+                    </div>
+                    <div class="form-group">
+                        <label class="control-lable">Jumlah</label>
+                        <input class="form-control" type="text" value="{{ $k->jumlah }}" placeholder="Jumlah...." name="jumlah" id="jumlah">
+                        {{ $errors->first('jumlah')}}
+                    </div>
+                    <div class="form-group">
+                        <label class="control-lable">Tanggal</label>
+                        <input class="form-control datepicker " value="{{ $k->tanggal }}" type="text" rows="3" autocomplete="off" placeholder="Tanggal...." name="tanggal" id="datepicker">
+                        {{ $errors->first('tanggal')}}
+                    </div>
+                    <div class="custom-file">
+                        <label class="custom-file-label" for="exampleInputFile">{{$k->foto}}</label>
+                        <input type="file" class="custom-file-input" id="exampleInputFile" name="foto" multiple>
+                        <object data="/img/keuangan/{{ $k->foto }}" width="400px"></object>
+                        <input type="hidden" class="custom-file-input" id="hidden_image" name="hidden_image" value="{{ $k->foto }}">
+                        {{ $errors->first('foto')}}
+                    </div>
+                    @foreach($user as $u)
+                    <input type="hidden" name="tenant_id" id="tenant_id" value="{{ $u->tenant_id }}" />
+                    @endforeach
+                    <div class="modal-footer">
+                        <a href="{{ route('tenant.keuangan') }}"><button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button></a>
+                        <button class="btn btn-primary" type="submit">
+                            Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
+<!-- END FORM EDIT -->
+<!-- MODAL LABA RUGI -->
+<div class="modal fade" id="labaModal" tabindex="-1" role="dialog" aria-labelledby="labaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="labaModalLabel">Tambah Data Arus Kas</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="laba_form" action="" enctype="multipart/form-data">
+                    @csrf
+
+                    <div class="form-group">
+                        <label class="control-lable">Keterangan</label>
+                        <input class="form-control @error('keterangan') is-invalid @enderror" type="text" placeholder="Keterangan..." name="keterangan" id="keterangan" value="{{ old('keterangan') }}" required />
+                        @if($errors->has('keterangan'))
+                        <div class="text-danger">
+                            {{ $errors->first('keterangan')}}
+                        </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label class="control-lable">Jenis</label>
+                        <select class="form-control @error('jenis') is-invalid @enderror" name="jenis" id="jenis" required>
+                            <option selected="" disabled="">Pilih Jenis</option>
+                            <option value="0" name="pemasukan" id="pemasukan">Pemasukan</option>
+                            <option value="1" name="pengeluaran" id="pengeluaran">Pengeluaran</option>
+                        </select>
+                        @if($errors->has('jenis'))
+                        <div class="text-danger">
+                            {{ $errors->first('jenis')}}
+                        </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label class="control-lable">Jumlah</label>
+                        <input class="form-control @error('jumlah') is-invalid @enderror" placeholder="Jumlah...." name=" jumlah" id="jumlah" value="{{ old('jumlah') }}" required />
+                        @if($errors->has('jumlah'))
+                        <div class="text-danger">
+                            {{ $errors->first('jumlah')}}
+                        </div>
+                        @endif
+                    </div>
+                    <div class="form-group">
+                        <label class="control-lable">Tanggal</label>
+                        <input class="form-control datepicker " type="text" rows="3" autocomplete="off" placeholder="Tanggal...." name="tanggal" id="datepicker" value="{{ old('tanggal') }}" required></input>
+                        @if($errors->has('tanggal'))
+                        <div class="text-danger">
+                            {{ $errors->first('tanggal')}}
+                        </div>
+                        @endif
+                    </div>
+                    <div class="input-group image-preview">
+                        <input type="text" class="form-control image-preview-filename" disabled="disabled" placeholder="Bukti Transaksi....">
+                        <span class="input-group-btn">
+                            <!-- image-preview-clear button -->
+                            <button type="button" class="btn btn-default image-preview-clear" style="display:none;">
+                                <span class="glyphicon glyphicon-remove"></span> Clear
+                            </button>
+                            <!-- image-preview-input -->
+                            <div class="btn btn-default image-preview-input">
+                                <span class="glyphicon glyphicon-folder-open"></span>
+                                <span class="image-preview-input-title">Browse</span>
+                                <input type="file" class=" @error('file') is-invalid @enderror" name="file" id="file" value="{{ old('foto') }}" /> <!-- rename it -->
+                            </div>
+                        </span>
+                    </div>
+                    @if($errors->has('file'))
+                    <div class="text-danger">
+                        {{ $errors->first('file')}}
+                    </div>
+                    @endif
+                    @foreach($user as $u)
+                    <input type="hidden" name="tenant_id" id="tenant_id" value="{{ $u->tenant_id }}" />
+                    @endforeach
+                    <div class="modal-footer">
+                        <a href="{{ route('tenant.keuangan') }}"><button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button></a>
+                        <input type="submit" value="Simpan" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @section('css')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg=" crossorigin="anonymous" />
@@ -298,7 +463,37 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8=" crossorigin="anonymous"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="{{asset('theme/js/plugins/sweetalert2.min.js')}}"></script>
+<script src="{{asset('theme/js/scripts/sweetalert.script.js')}}"></script>
 <script>
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function() {
+            $(this).remove();
+        });
+    }, 1500);
+
+    $('.delete').on("click", function(event) {
+        event.preventDefault();
+        const url = $(this).attr('href');
+        swal({
+            title: 'Apa Anda Yakin Menghapus ?',
+            text: "Anda tidak akan dapat mengembalikan data ini",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#0CC27E',
+            cancelButtonColor: '#FF586B',
+            confirmButtonText: 'Hapus',
+            cancelButtonText: 'Batal',
+            confirmButtonClass: 'btn btn-success mr-5',
+            cancelButtonClass: 'btn btn-danger',
+            buttonsStyling: false
+        }).then(function(value) {
+            if (value) {
+                window.location.href = url;
+            }
+        });
+    });
+
     var grafik = <?php echo json_encode($grafik) ?>;
     Highcharts.chart('chartKeuangan', {
         chart: {
@@ -353,28 +548,71 @@
             }
         }]
     });
+</script>
+
+<script>
     $('#ul-contact-list').DataTable({
         responsive: true,
         order: [
             [2, 'DESC']
         ]
     });
+
     $('#ul-labarugi-list').DataTable({
         responsive: true,
         order: [
             [2, 'DESC']
         ]
     });
+</script>
+
+<!-- MODAL -->
+<script>
     $(document).ready(function() {
         @if(Session::has('errors'))
-        $('#exampleModal').modal('show');
+        $('#arusModal').modal('show');
         @endif
     });
+
+    $(document).ready(function() {
+        @if(Session::has('errors'))
+        $('#arusEditModal{{ $k->id }}').modal('show');
+        @endif
+    });
+
+    // $('body').on('click', '#edit-customer', function() {
+    //     var customer_id = $(this).data('id');
+    //     $.get('customers/' + customer_id + '/edit', function(data) {
+    //         $('#customerCrudModal').html("Edit customer");
+    //         $('#btn-update').val("Update");
+    //         $('#btn-save').prop('disabled', false);
+    //         $('#crud-modal').modal('show');
+    //         $('#cust_id').val(data.id);
+    //         $('#name').val(data.name);
+    //         $('#email').val(data.email);
+    //         $('#address').val(data.address);
+    //     })
+    // });
+
     $(".custom-file-input").on("change", function() {
         var fileName = $(this).val().split("\\").pop();
         $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
     });
 </script>
+
+<script>
+    $(document).ready(function() {
+        @if(Session::has('errors'))
+        $('#labaModal').modal('show');
+        @endif
+    });
+
+    $(".custom-file-input").on("change", function() {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+</script>
+
 <script>
     $(function() {
         $(".datepicker").datepicker({
@@ -384,6 +622,7 @@
         });
     });
 </script>
+
 <script>
     //JS FORM INPUT
 

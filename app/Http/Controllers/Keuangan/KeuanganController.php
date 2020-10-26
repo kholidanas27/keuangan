@@ -29,15 +29,15 @@ class KeuanganController extends Controller
 
     //FUNCTION INKUBATOR
     public function indexInkubator()
-    {    
+    {
         $masuk = Keuangan::select(DB::raw("(SELECT SUM(jumlah) AS jumlah FROM arus_kas WHERE jenis='1') as count"))
-        ->whereYear('tanggal', date('Y'))
-        ->groupBy(DB::raw("Month(tanggal)","jenis","asc"))
-        ->pluck('count');
+            ->whereYear('tanggal', date('Y'))
+            ->groupBy(DB::raw("Month(tanggal)", "jenis", "asc"))
+            ->pluck('count');
         $keluar = Keuangan::select(DB::raw("(SELECT SUM(jumlah) AS jumlah FROM arus_kas WHERE jenis='0') as count"))
-        ->whereYear('tanggal', date('Y'))
-        ->groupBy(DB::raw("Month(tanggal)","jenis","asc"))
-        ->pluck('count');
+            ->whereYear('tanggal', date('Y'))
+            ->groupBy(DB::raw("Month(tanggal)", "jenis", "asc"))
+            ->pluck('count');
         $keuangan = Keuangan::orderBy('tanggal', 'asc')->whereYear('tanggal', date('Y'))->whereMonth('tanggal', date('m'))->get();
         $pendapatan = Keuangan::orderBy('tanggal', 'asc')->get();
         //Menghitung Total
@@ -45,11 +45,11 @@ class KeuanganController extends Controller
         $total_keluar = 0;
 
         foreach ($keuangan as $row) {
-            if($row->jenis=='1')
-            $total_masuk = $total_masuk + $row->jumlah;
+            if ($row->jenis == '1')
+                $total_masuk = $total_masuk + $row->jumlah;
 
-            elseif($row->jenis=='0')
-            $total_keluar = $total_keluar + $row->jumlah;
+            elseif ($row->jenis == '0')
+                $total_keluar = $total_keluar + $row->jumlah;
         }
 
         $total = $total_masuk - $total_keluar;
@@ -58,21 +58,20 @@ class KeuanganController extends Controller
         $kas_keluar = 0;
 
         foreach ($pendapatan as $row) {
-            if($row->jenis=='1')
-            $kas_masuk = $kas_masuk + $row->jumlah;
+            if ($row->jenis == '1')
+                $kas_masuk = $kas_masuk + $row->jumlah;
 
-            elseif($row->jenis=='0')
-            $kas_keluar = $kas_keluar + $row->jumlah;
+            elseif ($row->jenis == '0')
+                $kas_keluar = $kas_keluar + $row->jumlah;
         }
 
         $saldo_kas = $kas_masuk - $kas_keluar;
 
-        return view('keuangan.inkubator.index',compact('keuangan','masuk','keluar',"total",'total_masuk','total_keluar','saldo_kas','kas_masuk','kas_keluar'));
-
+        return view('keuangan.inkubator.index', compact('keuangan', 'masuk', 'keluar', "total", 'total_masuk', 'total_keluar', 'saldo_kas', 'kas_masuk', 'kas_keluar'));
     }
 
     //FUNCTION MENTOR
-    public function indexMentor() 
+    public function indexMentor()
     {
         $arus = DB::table('arus_kas')->get();
         $keuangan = DB::table('tenant_mentor')
@@ -141,7 +140,7 @@ class KeuanganController extends Controller
             ->whereYear('tanggal', date('Y'))
             ->groupBy(DB::raw("Month(tanggal)", "asc"))
             ->pluck('count');
-            // dd($grafik);
+        // dd($grafik);
         $user = User::where('users.id', Auth::user()->id)
             ->join('tenant_user', 'users.id', '=', 'tenant_user.user_id')
             ->select('users.*', 'tenant_user.*')
@@ -164,7 +163,7 @@ class KeuanganController extends Controller
         // dd($user);
     }
 
-    public function tambah()
+    public function tambahArus()
     {
         $user = User::where('users.id', Auth::user()->id)
             ->join('tenant_user', 'users.id', '=', 'tenant_user.user_id')
@@ -178,7 +177,7 @@ class KeuanganController extends Controller
         return view('keuangan.index', compact('keuangan', 'title', 'tenant'));
         // return response()->json($user);
     }
-    public function store(Request $request)
+    public function storeArus(Request $request)
     {
         $request->validate([
             'keterangan' => 'required',
@@ -190,6 +189,90 @@ class KeuanganController extends Controller
         $file = $request->file;
         $filename = time() . Str::slug($request->get('keterangan')) . '.' . $file->getClientOriginalExtension();
         DB::table('arus_kas')->insert([
+            'tenant_id' => $request->tenant_id,
+            'keterangan' => $request->keterangan,
+            'jenis' => $request->jenis,
+            'jumlah' => $request->jumlah,
+            'foto' => $filename,
+            'tanggal' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+
+        $tujuan_upload = 'img/keuangan';
+        $file->move($tujuan_upload, $filename);
+
+        // \Session::flash('sukses', 'Berhasil Menambahkan Data Pengumuman');
+        return redirect('/tenant/keuangan')->with('success', 'Menambahkan Data Arus Kas');
+    }
+    public function editArus($id)
+    {
+
+        $k = DB::table('arus_kas')->where('id', $id)->first();
+        $tenant = DB::table('tenant')->get();
+        $arus = DB::table('arus_kas')->get();
+        $users = DB::table('users')->get();
+        $keuangan = keuangan::find($id);
+
+        return view('keuangan.index', compact('k', 'keuangan', 'users', 'tenant', 'arus'));
+    }
+
+    public function updateArus($id, Request $request)
+    {
+
+        $request->validate([
+            'keterangan' => 'required',
+            'jenis' => 'required',
+            'jumlah' => 'required',
+            'file' => 'required|file|mimes:png,jpeg,jpg',
+            'tanggal' => 'required',
+        ]);
+
+        $keuangan = Keuangan::find($id);
+        $filename = $keuangan->foto;
+
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . Str::slug($request->get('keterangan')) . '.' . $file->getClientOriginalExtension();
+            $tujuan_upload = 'img/keuangan';
+            $file->move($tujuan_upload, $filename);
+            Keuangan::delete('img/keuangan/' . $keuangan->foto);
+        }
+        $keuangan->update([
+            'tenant_id' => $request->tenant_id,
+            'keterangan' => $request->keterangan,
+            'jenis' => $request->jenis,
+            'jumlah' => $request->jumlah,
+            'foto' => $filename,
+            'tanggal' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        return redirect('/tenant/keuangan', compact('keuangan'))->with(['update' => 'Edit Data Arus Kas']);
+    }
+
+    public function hapusArus($id)
+    {
+
+        $file = DB::table('arus_kas')->where('id', $id)->first();
+        File::delete('img/keuangan/' . $file->foto);
+        DB::table('arus_kas')->where('id', $id)->delete();
+
+        return redirect('/tenant/keuangan')->with('delete', 'Menghapus Data Arus Kas');
+    }
+
+    public function storeLaba(Request $request)
+    {
+        $request->validate([
+            'keterangan' => 'required',
+            'jenis' => 'required',
+            'jumlah' => 'required',
+            'file' => 'required|file|mimes:png,jpeg,jpg',
+            'tanggal' => 'required',
+        ]);
+        $file = $request->file;
+        $filename = time() . Str::slug($request->get('keterangan')) . '.' . $file->getClientOriginalExtension();
+        DB::table('laba_rugi')->insert([
             'tenant_id' => $request->tenant_id,
             'keterangan' => $request->keterangan,
             'jenis' => $request->jenis,
