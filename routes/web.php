@@ -192,6 +192,11 @@ Route::group(['prefix' => 'tenant', 'middleware' => ['role:tenant']], function (
 	Route::get('/keuangan/edit/{id}', 'Keuangan\KeuanganController@editArus')->name('tenant.editArus-id');
 	Route::put('/keuangan/update/{id}', 'Keuangan\KeuanganController@updateArus')->name('tenant.updateArus-id');
 	Route::get('/keuangan/hapus/{id}', 'Keuangan\KeuanganController@hapusArus')->name('tenant.hapusArus-id');
+	Route::get('/pendapatan/tambah', 'Keuangan\KeuanganController@tambahLaba')->name('tenant.tambahLaba');
+	Route::post('/pendapatan/store', 'Keuangan\KeuanganController@storeLaba')->name('tenant.storeLaba');
+	Route::get('/pendapatan/edit/{id}', 'Keuangan\KeuanganController@editLaba')->name('tenant.editLaba-id');
+	Route::put('/pendapatan/update/{id}', 'Keuangan\KeuanganController@updateLaba')->name('tenant.updateLaba-id');
+	Route::get('/pendapatan/hapus/{id}', 'Keuangan\KeuanganController@hapusLaba')->name('tenant.hapusLaba-id');
 });
 
 Route::group(['prefix' => 'user', 'middleware' => ['role:user']], function () {
