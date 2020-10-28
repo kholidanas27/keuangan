@@ -30,17 +30,36 @@ class KeuanganController extends Controller
     //FUNCTION INKUBATOR
     public function indexInkubator()
     {
-        $masuk = Keuangan::select(DB::raw("(SELECT SUM(jumlah) AS jumlah FROM arus_kas WHERE jenis='1') as count"))
-            ->whereYear('tanggal', date('Y'))
-            ->groupBy(DB::raw("Month(tanggal)", "jenis", "asc"))
-            ->pluck('count');
+        $categories = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        for($bulan=1;$bulan < 13;$bulan++){
+            $masuk     = collect(DB::SELECT("SELECT SUM(jumlah) AS jumlah from arus_kas where month(tanggal)='$bulan'"))->first();
+            $arus[] = $masuk->jumlah;
+         }
+        // $masuk = Keuangan::select(DB::raw("(SELECT SUM(jumlah) AS masuk FROM arus_kas WHERE jenis='1') as count"))
+        //     ->whereYear('tanggal', date('Y'))
+        //     ->groupBy(DB::raw("Month(tanggal)", "asc"))
+        //     ->pluck('count');
+            // dd($arus);
         $keluar = Keuangan::select(DB::raw("(SELECT SUM(jumlah) AS jumlah FROM arus_kas WHERE jenis='0') as count"))
             ->whereYear('tanggal', date('Y'))
             ->groupBy(DB::raw("Month(tanggal)", "jenis", "asc"))
             ->pluck('count');
+
+        // Menampilkan Data Kedalam Grafik
+        // $grafik = Keuangan::select(DB::raw("(SUM(jumlah)) as count"))
+        //     ->whereYear('tanggal', date('Y'))
+        //     ->groupBy(DB::raw("Month(tanggal)", "jenis", "asc"))
+        //     ->pluck('count');
+
+        // Menampilkan Data Keuangan
         $keuangan = Keuangan::orderBy('tanggal', 'asc')->whereYear('tanggal', date('Y'))->whereMonth('tanggal', date('m'))->get();
         $pendapatan = Keuangan::orderBy('tanggal', 'asc')->get();
-        //Menghitung Total
+        // dd($keuangan);
+        
+        // Menampilkan Tenant
+        $tenant = DB::table('tenant')->get();
+
+        // Menghitung Total Pada Bagian Table
         $total_masuk = 0;
         $total_keluar = 0;
 
@@ -53,7 +72,8 @@ class KeuanganController extends Controller
         }
 
         $total = $total_masuk - $total_keluar;
-
+        
+        // Menghitung Total pada Bagian Atas
         $kas_masuk = 0;
         $kas_keluar = 0;
 
@@ -67,22 +87,87 @@ class KeuanganController extends Controller
 
         $saldo_kas = $kas_masuk - $kas_keluar;
 
-        return view('keuangan.inkubator.index', compact('keuangan', 'masuk', 'keluar', "total", 'total_masuk', 'total_keluar', 'saldo_kas', 'kas_masuk', 'kas_keluar'));
+        
+        return view('keuangan.mentor.index', compact('keuangan','tenant','categories', 'arus', "total", 'total_masuk', 'total_keluar', 'saldo_kas', 'kas_masuk', 'kas_keluar'));
+    }
+    // Fungsi Filter Inkubator
+    public function inkubatorFilter(Request $request){
+        $month = $request->month;
+        $year = $request->year;
+            
+        $keuangan = Keuangan::orderBy('id','desc');
+        if($year){
+          $keuangan->whereYear('tanggal', '=', $year);
+        }
+        if($month){
+          $keuangan->whereMonth('tanggal', '=', $month);
+        }
+        $keuangan = $keuangan->get();
+        
+        $grafik = Keuangan::select(DB::raw("(SUM(jumlah)) as count"))
+            ->whereYear('tanggal', '=', $year)
+            ->groupBy(DB::raw("Month(tanggal)", "jenis", "asc"))
+            ->pluck('count');
+
+        // Menampilkan Data Keuangan
+        $pendapatan = Keuangan::orderBy('tanggal', 'asc')->get();
+        // dd($keuangan);
+        
+        // Menampilkan Tenant
+        $tenant = DB::table('tenant')->get();
+
+        // Menghitung Total Pada Bagian Table
+        $total_masuk = 0;
+        $total_keluar = 0;
+
+        foreach ($keuangan as $row) {
+            if ($row->jenis == '1')
+                $total_masuk = $total_masuk + $row->jumlah;
+
+            elseif ($row->jenis == '0')
+                $total_keluar = $total_keluar + $row->jumlah;
+        }
+
+        $total = $total_masuk - $total_keluar;
+        
+        // Menghitung Total pada Bagian Atas
+        $kas_masuk = 0;
+        $kas_keluar = 0;
+
+        foreach ($pendapatan as $row) {
+            if ($row->jenis == '1')
+                $kas_masuk = $kas_masuk + $row->jumlah;
+
+            elseif ($row->jenis == '0')
+                $kas_keluar = $kas_keluar + $row->jumlah;
+        }
+
+        $saldo_kas = $kas_masuk - $kas_keluar;        
+        
+        return view('keuangan.mentor.index',  compact('keuangan','tenant', 'grafik', "total", 'total_masuk', 'total_keluar'));
     }
 
-    //FUNCTION MENTOR
-    public function indexMentor()
-    {
-        $arus = DB::table('arus_kas')->get();
+    // Fungsi Filter Mentor
+    public function mentorFilter(Request $request){
+        $month = $request->month;
+        $year = $request->year;
+            
         $keuangan = DB::table('tenant_mentor')
             ->join('arus_kas', 'tenant_mentor.tenant_id', '=', 'arus_kas.tenant_id')
             ->join('users', 'tenant_mentor.user_id', '=', 'users.id')
-            ->select('users.id', 'tenant_mentor.user_id', 'arus_kas.*')
+            ->join('tenant', 'tenant_mentor.tenant_id', '=', 'tenant.id')            
+            ->select('users.id', 'tenant_mentor.user_id', 'arus_kas.*', 'tenant.*')
             ->where([
                 ['user_id', \Auth::user()->id]
-            ])
-            ->whereMonth('tanggal', date('m'))
-            ->get();
+            ]);
+        if($year){
+          $keuangan->whereYear('tanggal', '=', $year);
+        }
+        if($month){
+          $keuangan->whereMonth('tanggal', '=', $month);
+        }
+        $keuangan = $keuangan->get();
+        
         $grafik = DB::table('tenant_mentor')
             ->join('arus_kas', 'tenant_mentor.tenant_id', '=', 'arus_kas.tenant_id')
             ->join('users', 'tenant_mentor.user_id', '=', 'users.id')
@@ -94,8 +179,85 @@ class KeuanganController extends Controller
             ->groupBy(DB::raw("Month(tanggal)", "asc"))
             // ->where('tenant_id', $keuangan->tenant_id)
             ->pluck('count');
-        // dd($grafik);
 
+        // Menampilkan Data Keuangan
+        $pendapatan = Keuangan::orderBy('tanggal', 'asc')->get();
+        // dd($keuangan);
+        
+        // Menampilkan Tenant
+        $tenant = DB::table('tenant')->get();
+
+        // Menghitung Total Pada Bagian Table
+        $total_masuk = 0;
+        $total_keluar = 0;
+
+        foreach ($keuangan as $row) {
+            if ($row->jenis == '1')
+                $total_masuk = $total_masuk + $row->jumlah;
+
+            elseif ($row->jenis == '0')
+                $total_keluar = $total_keluar + $row->jumlah;
+        }
+
+        $total = $total_masuk - $total_keluar;
+        
+        // Menghitung Total pada Bagian Atas
+        $kas_masuk = 0;
+        $kas_keluar = 0;
+
+        foreach ($pendapatan as $row) {
+            if ($row->jenis == '1')
+                $kas_masuk = $kas_masuk + $row->jumlah;
+
+            elseif ($row->jenis == '0')
+                $kas_keluar = $kas_keluar + $row->jumlah;
+        }
+
+        $saldo_kas = $kas_masuk - $kas_keluar;        
+        
+        return view('keuangan.mentor.index',  compact('keuangan','tenant', 'grafik', "total", 'total_masuk', 'total_keluar'));
+    }
+
+    //FUNCTION MENTOR
+    public function indexMentor()
+    {
+        // Menampilkan Data Keuangan Pada Bagian Table
+        $keuangan = DB::table('tenant_mentor')
+            ->join('arus_kas', 'tenant_mentor.tenant_id', '=', 'arus_kas.tenant_id')
+            ->join('users', 'tenant_mentor.user_id', '=', 'users.id')
+            ->join('tenant', 'tenant_mentor.tenant_id', '=', 'tenant.id')            
+            ->select('users.id', 'tenant_mentor.user_id', 'arus_kas.*', 'tenant.*')
+            ->where([
+                ['user_id', \Auth::user()->id]
+            ])
+            ->whereMonth('tanggal', date('m'))
+            ->get();
+
+        // Menampilkan Data Tenant
+        $tenant = DB::table('tenant_mentor')
+            ->join('users', 'tenant_mentor.user_id', '=', 'users.id')
+            ->join('tenant', 'tenant_mentor.tenant_id', '=', 'tenant.id')            
+            ->select('users.id', 'tenant_mentor.*', 'tenant.*')
+            ->where([
+                ['user_id', \Auth::user()->id]
+            ])
+            ->get();
+
+        // Menampilkan Data Keuangan Pada Bagian Grafik
+        $grafik = DB::table('tenant_mentor')
+            ->join('arus_kas', 'tenant_mentor.tenant_id', '=', 'arus_kas.tenant_id')
+            ->join('users', 'tenant_mentor.user_id', '=', 'users.id')
+            ->select(DB::raw("(SUM(jumlah)) as count"))
+            ->where([
+                ['user_id', \Auth::user()->id]
+            ])
+            ->whereYear('tanggal', date('Y'))
+            ->groupBy(DB::raw("Month(tanggal)", "asc"))
+            // ->where('tenant_id', $keuangan->tenant_id)
+            ->pluck('count');
+        // dd($tenant);
+
+        // Menghitung Total Pada Bagian Table
         $total_masuk = 0;
         $total_keluar = 0;
 
@@ -109,17 +271,13 @@ class KeuanganController extends Controller
 
         $total = $total_masuk - $total_keluar;
 
-        return view('keuangan.mentor.index', compact('keuangan', 'total', 'total_masuk', 'total_keluar', 'arus', 'grafik'));
+        return view('keuangan.mentor.index', compact('keuangan','tenant', 'total', 'total_masuk', 'total_keluar', 'grafik'));
     }
 
     //FUNCTION TENANT
     public function indexTenant()
     {
-
-        $tenant = DB::table('tenant')->get();
-        $arus = DB::table('arus_kas')->whereMonth('tanggal', date('m'))->get();
-        $users = DB::table('users')->get();
-
+        // Menampilkan Data Keuangan Pada Bagian Table
         $keuangan = DB::table('tenant_user')
             ->join('arus_kas', 'tenant_user.tenant_id', '=', 'arus_kas.tenant_id')
             ->join('users', 'tenant_user.user_id', '=', 'users.id')
@@ -130,6 +288,7 @@ class KeuanganController extends Controller
             ->whereMonth('tanggal', date('m'))
             ->get();
 
+        // Menampilkan Data Keuangan Pada Bagian Grafik
         $grafik = DB::table('tenant_user')
             ->join('arus_kas', 'tenant_user.tenant_id', '=', 'arus_kas.tenant_id')
             ->join('users', 'tenant_user.user_id', '=', 'users.id')
@@ -141,11 +300,14 @@ class KeuanganController extends Controller
             ->groupBy(DB::raw("Month(tanggal)", "asc"))
             ->pluck('count');
         // dd($grafik);
+        
+        // Relasi antara Tenant dengan User
         $user = User::where('users.id', Auth::user()->id)
             ->join('tenant_user', 'users.id', '=', 'tenant_user.user_id')
             ->select('users.*', 'tenant_user.*')
             ->get();
-        // Menghitung Totalan
+
+        // Menghitung Totalan Pada Bagian Table
         $total_masuk = 0;
         $total_keluar = 0;
 
@@ -159,7 +321,7 @@ class KeuanganController extends Controller
 
         $total = $total_masuk - $total_keluar;
 
-        return view('keuangan.index', compact('keuangan', 'grafik', 'total', 'total_masuk', 'total_keluar', 'tenant', 'user', 'arus'));
+        return view('keuangan.index', compact('keuangan', 'grafik', 'total', 'total_masuk', 'total_keluar', 'user'));
         // dd($user);
     }
 

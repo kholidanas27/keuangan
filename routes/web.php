@@ -50,7 +50,10 @@ Route::group(['prefix' => 'inkubator', 'middleware' => ['role:inkubator']], func
 	Route::get('/produk/{kategori}/{id}', 'Produk\ProdukController@detail')->name('inkubator.produk-detail');
 
 	Route::get('/aktifitas', 'Aktifitas\AktifitasController@index')->name('inkubator.aktifitas');
+	// Route Keuangan Mentor
 	Route::get('/keuangan', 'keuangan\KeuanganController@indexInkubator')->name('inkubator.keuangan');
+	Route::get('/keuangan/filter', 'Keuangan\KeuanganController@inkubatorFilter')->name('inbox.filter');
+	
 	Route::get('/pencapaian', 'Pencapaian\PencapaianController@index')->name('inkubator.pencapaian');
 	Route::get('/laporan', 'Laporan\LaporanController@index')->name('inkubator.laporan');
 	Route::get('/chat', 'Chat\ChatController@index')->name('inkubator.chat');
@@ -125,7 +128,10 @@ Route::group(['prefix' => 'inkubator', 'middleware' => ['role:inkubator']], func
 Route::group(['prefix' => 'mentor', 'middleware' => ['role:mentor']], function () {
 	Route::get('/', 'Mentor\HomeController@index')->name('mentor.home');
 	Route::get('/chat', 'Chat\ChatController@index')->name('mentor.chat');
+	// Route Keuangan Mentor
 	Route::get('/keuangan', 'Keuangan\KeuanganController@indexMentor')->name('mentor.keuangan');
+	Route::get('/keuangan/filter', 'Keuangan\KeuanganController@mentorFilter')->name('inbox.filter');
+
 	//route surat mentor
 	Route::get('/suratmasuk', 'Persuratan\DisposisiController@mentorsuratmasuk');
 	Route::get('/suratkeluar', 'Persuratan\DisposisiController@mentorsuratkeluar');

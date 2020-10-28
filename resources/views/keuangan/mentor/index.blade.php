@@ -1,245 +1,414 @@
 @extends('layouts.app')
 @section('content')
 <div class="row">
-	<!-- ICON BG-->
-	<div class="col-lg-4 col-md-6 col-sm-6">
-		<div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-			<div class="card-body text-center"><i class="i-Add-User"></i>
-				<div class="content">
-					<p class="text-muted">Kas Masuk</p>
-					<p class="text-primary">{{"Rp " . number_format($total_masuk,2,',','.') }}</p>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-4 col-md-6 col-sm-6">
-		<div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-			<div class="card-body text-center"><i class="i-Financial"></i>
-				<div class="content">
-					<p class="text-muted">Kas Keluar</p>
-					<p class="text-primary">{{"Rp ". number_format($total_keluar,2,',','.') }}</p>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-4 col-md-6 col-sm-6">
-		<div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-			<div class="card-body text-center"><i class="i-Money-2"></i>
-				<div class="content">
-					<p class="text-muted">Saldo Kas</p>
-					<p class="text-primary">{{"Rp " . number_format($total,2,',','.') }}</p>
-				</div>
-			</div>
-		</div>
-	</div>
+    <!-- ICON BG-->
+    <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+            <div class="card-body text-center"><i class="i-Add-User"></i>
+                <div class="content">
+                    <p class="text-muted">Kas Masuk</p>
+                    <p class="text-primary">{{"Rp " . number_format($total_masuk,2,',','.') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+            <div class="card-body text-center"><i class="i-Financial"></i>
+                <div class="content">
+                    <p class="text-muted">Kas Keluar</p>
+                    <p class="text-primary">{{"Rp ". number_format($total_keluar,2,',','.') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+            <div class="card-body text-center"><i class="i-Money-2"></i>
+                <div class="content">
+                    <p class="text-muted">Saldo Kas</p>
+                    <p class="text-primary">{{"Rp " . number_format($total,2,',','.') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="row">
     <div class="col-lg-12 col-md-12">
         <div class="card mb-4">
             <div class="card-body">
                 <div class="card-title">Grafik Keuangan Seluruh Tenant</div>
-                <div id="chartKeuanganM" style="height: 300px;"></div>
+                <div id="chartKeuangan" style="height: 300px;"></div>
             </div>
         </div>
     </div>
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header container-fluid">
-                <div class="row">
-                    <div class="col-md-10">
-                        <h3>Arus Kas</h3>
-                    </div>
-                    <div class="col-md-0">
-                        <a href="#"><button class="btn btn-primary custom-btn btn-sm ml-5" type="button" data-toggle="modal" data-target="#exampleModal" name="create_record" id="create_record">Tambah Data</button></a>
-                    </div>
+</div>
+
+<div class="row">
+	<div class="col-md-3">
+        {{-- Menu Filter --}}
+        <!-- @role(['inkubator', 'mentor'])
+        <div class="card mb-4">
+			<div class="card-header container-fluid">
+			  <div class="row">
+				<div class="col">
+				  <h3>Filter</h3>
+				</div>
+			  </div>
+            </div>
+			<div class="card-body">
+                <div class="form-group">
+                    <label for="daterange">Rentang tanggal</label>
+                    <input type="text" name="daterange" class="form-control" placeholder="set tanggal" >
+                </div>
+                <div class="form-group">
+                    <label for="tenant">Tenant</label>
+                    @foreach ($tenant as $item)
+                        <label class="checkbox checkbox-success">
+                            <input type="checkbox" name="tenant" value="{{ $item->id }}"/><span>{{ $item->title }}</span><span class="checkmark"></span>
+                        </label>
+                    @endforeach
+                </div>
+                <div class="form-group">
+                    <button id="filter" class="btn btn-primary">Filter</button>
                 </div>
             </div>
-            <div class="card-body">
-                <table class="display table" id="ul-contact-list" style="width:100%;">
-                    <thead>
-                        <tr>
-                            <th width="20%">Tanggal</th>
-                            <th width="15%">Keterangan</th>
-                            <th width="15%">Pemasukan</th>
-                            <th width="15%">Pengeluaran</th>
-                            <th width="15%">Saldo</th>
-                            <th width="10%">Foto</th>
-                            <th width="10%">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($keuangan as $k)
-                        <tr>
-                            <td>
-                                {{ date('d F Y', strtotime($k->tanggal)) }}
-                            </td>
-                            <td>
-                                <p>{{ $k->keterangan }}</p>
-                            </td>
-                            <td>
-                                @if($k->jenis == 1)
-                                {{ "Rp " . number_format($k->jumlah,2,',','.') }}
-                                @endif
-                            </td>
-                            <td>
-                                @if($k->jenis == 0)
-                                {{ "Rp " . number_format($k->jumlah,2,',','.') }}
-                                @endif
-                            </td>
-                            <td>
-                                @if($k->jenis == 1)
-                                {{ "Rp " . number_format($k->jumlah,2,',','.') }}
-                                @else($k->jenis == 0)
-                                {{ "Rp " . number_format($k->jumlah,2,',','.') }}
-                                @endif
-                            </td>
-                            <td>
-                                <img src="{{ asset('img/keuangan/'. $k->foto ) }}" width="150" height="100" alt="">
-                            </td>
-                            <td>
-                                <a class="ul-link-action text-success" data-toggle="tooltip" href="#" data-placement="top" title="Edit"><i class="i-Edit"></i>
-                                    <a class="ul-link-action text-danger mr-1 delete" href="#" data-toggle="tooltip" data-placement="top" title="Want To Delete !!!">
-                                        <i class="i-Eraser-2"></i></a>
-                            </td>
-                        </tr>
-                        @endforeach
-
-                        <tr>
-                            <td colspan="2"><b>
-                                    <h4>Total</h4>
-                                </b></td>
-                            <td><b>{{"Rp " . number_format($total_masuk,2,',','.') }}</b></td>
-                            <td><b>{{"Rp " . number_format($total_keluar,2,',','.') }}</b></td>
-                            <td colspan="2"><b>{{"Rp " . number_format($total,2,',','.') }}</b></td>
-                        </tr>
-
-                    </tbody>
-                </table>
+        </div>
+        @endrole -->
+        @role(['inkubator', 'mentor'])
+        <div class="card mb-4">
+			<div class="card-header container-fluid">
+			  <div class="row">
+				<div class="col">
+				  <h3>Filter</h3>
+				</div>
+			  </div>
+            </div>
+			<div class="card-body">
+            <form action="{{ route('inbox.filter') }}" method="GET" class="form-group">
+                {{ csrf_field() }}
+                <select style="cursor:pointer;" class="form-control" id="tag_select" name="year">
+                    <option value="0" selected disabled> Pilih Tahun</option>
+                    <?php 
+                    $year = date('Y');
+                    $min = $year - 60;
+                    $max = $year;
+                    for( $i=$max; $i>=$min; $i-- ) {
+                    echo '<option value='.$i.'>'.$i.'</option>';
+                    }
+                    ?>
+                </select>
+                <select style="cursor:pointer;margin-top:1.5em;margin-bottom:1.5em;" class="form-control" id="tag_select" name="month">
+                    <option value="0" selected disabled> Pilih Bulan</option>
+                    <option value="01"> Januari</option>
+                    <option value="02"> Februari</option>
+                    <option value="03"> Maret</option>
+                    <option value="04"> April</option>
+                    <option value="05"> Mei</option>
+                    <option value="06"> Juni</option>
+                    <option value="07"> Juli</option>
+                    <option value="08"> Agustus</option>
+                    <option value="09"> September</option>
+                    <option value="10"> Oktober</option>
+                    <option value="11"> November</option>
+                    <option value="12"> Desember</option>
+                </select>
+                <input class="btn btn-primary" name="submit" type="submit" value="Filter"/>
+            </form>
             </div>
         </div>
-    </div>
-    &nbsp
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h3>Laba Rugi</h3>
-            </div>
-            <div class="card-body">
-                <table class="display table" id="ul-labarugi-list" style="width:100%;">
-                    <thead>
-                        <tr>
-                            <th width="65%">Pengumuman</th>
-                            <th width="15%">Kategori</th>
-                            <th width="15%">Tanggal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+        @endrole
 
-                        <tr>
-                            <td>
-                                <a href="/mentor/pengumuman/">
-                                    <strong></strong>
-                                    <p></p>
-                                </a>
-                            </td>
-                            <td>
-                                <a class="badge badge-success m-2 p-2" href="#"></a>
-                                <a class="badge badge-danger m-2 p-2" href="#"></a>
-                                <a class="badge badge-primary m-2 p-2" href="#"></a>
-                                <a class="badge badge-warning m-2 p-2" href="#"></a>
-                            </td>
-                            <td></td>
-                        </tr>
-                        </tr>
+	</div>
+	<div class="col-md-9">
+        <div id="task-manager-list">
+            <!--  content area -->
+            <div class="content"> 
+                <!--  task manager table -->
+                <div class="card" id="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="display table" id="names" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th width="15%">Tanggal</th>
+                                        <th width="15%">Keterangan</th>
+                                        <th width="20%">Pemasukan</th>
+                                        <th width="20%">Pengeluaran</th>
+                                        <th width="20%">Saldo</th>
+                                        <th width="10%">Tanda Bukti</th>
+                                        @role('tenant')
+                                        <th scope="col">Action</th>
+                                        @endrole
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($keuangan as $k)
+                                    <tr>
+                                        <td>{{ date('d F Y', strtotime($k->tanggal)) }}</td>
+                                        <td>{{$k->keterangan}}</td> 
+                                        <td>
+                                        @if($k->jenis == 1)
+                                        {{ "Rp " . number_format($k->jumlah,2,',','.') }}
+                                        @endif
+                                        </td> 
+                                        <td>
+                                        @if($k->jenis == 0)
+                                        {{ "Rp " . number_format($k->jumlah,2,',','.') }}
+                                        @endif
+                                        </td>  
+                                        @if($k->jenis == 1)
+                                        <td>{{"Rp " . number_format($k->jumlah,2,',','.') }}</td>
+                                        @else
+                                        <td>{{"Rp " . "- " . number_format($k->jumlah,2,',','.') }}</td>
+                                        @endif
+                                        <td></td>
+                                        
+                                    </tr>
+                                @endforeach       
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                        <td colspan="2"><b><h4>Total</h4></b></td>
+                                        <td><b>{{"Rp " . number_format($total_masuk,2,',','.') }}</b></td>
+                                        <td><b>{{"Rp " . number_format($total_keluar,2,',','.') }}</b></td>
+                                        <td><b>{{"Rp " . number_format($total,2,',','.') }}</b></td>
+                                        <td></td>
+                                    </tr> 
 
-                    </tbody>
-                </table>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!--  end of task manager table -->
             </div>
+            <!--  end of content area -->
         </div>
     </div>
-
+    @role('inkubator')
+    <!-- Modal -->
+    @endrole
+</div>
+<div class="row">
+    <div class="card">
+        {{-- <div class="card-body">{{ $between }}</div> --}}
+    </div>
 </div>
 @endsection
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('theme/css/plugins/datatables.min.css')}}" />
+<link href="{{ asset('theme/css/plugins/toastr.css')}}" rel="stylesheet" />
+<link rel="stylesheet" href="{{ asset('theme/css/plugins/sweetalert2.min.css')}}" /> 
+<style>
+  .container{
+    margin-top:20px;
+  }
+  .image-preview-input {
+    position: relative;
+  overflow: hidden;
+  margin: 0px;    
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;    
+  }
+  .image-preview-input input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  }
+  .image-preview-input-title {
+    margin-left:2px;
+  }
+</style>
+@endsection
+
 @section('js')
-<script src="{{ asset('theme/js/plugins/echarts.min.js')}}"></script>
-<script src="{{ asset('theme/js/scripts/echart.options.min.js')}}"></script>
-<script src="{{ asset('theme/js/scripts/dashboard.v1.script.min.js')}}"></script>
-<script src="{{ asset('theme/js/scripts/customizer.script.min.js')}}"></script>
-<script src="{{asset('theme/js/plugins/datatables.min.js')}}"></script>
-<script src="{{asset('theme/js/scripts/contact-list-table.min.js')}}"></script>
-<script src="{{asset('theme/js/scripts/datatables.script.min.js')}}"></script>
-<script src="{{asset('theme/js/plugins/datatables.min.js')}}"></script>
-<script src="{{asset('theme/js/scripts/tooltip.script.min.js')}}"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<script src="{{ asset('theme/js/plugins/datatables.min.js')}}"></script>
+<script src="{{ asset('theme/js/scripts/datatables.script.min.js')}}"></script>
+<script src="{{ asset('theme/js/plugins/toastr.min.js')}}"></script>
+<script src="{{ asset('theme/js/script/toastr.script.min.js')}}"></script>
+<script src="{{ asset('theme/js/plugins/sweetalert2.min.js')}}"></script>
+<script src="{{ asset('theme/js/scripts/sweetalert2.script.min.js')}}"></script>
+<script src="https://cdn.ckeditor.com/4.13.0/standard/ckeditor.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
+
 <script>
-    $('#ul-contact-list').DataTable({
-        responsive: true,
-        order: [
-            [2, 'DESC']
-        ]
+
+    $(function () {
+        @if(Session::has('errors'))
+            $('#inputModal').modal('show');
+        @endif
+        $('#names').DataTable(
+            {
+                "pagingType": "numbers",
+                @role('tenant')
+                "searching": true,
+                @endrole
+                @role(['mentor', 'inkubator'])
+                "searching": false,
+                @endrole
+                "scrollX": true
+            }
+        );
+
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+        CKEDITOR.replace('event');
     });
-    $('#ul-labarugi-list').DataTable({
-        responsive: true,
-        order: [
-            [2, 'DESC']
-        ]
+    
+    // $('#btnModal').on('click', function(){
+    //     $('#inputModal').modal('show');
+    // });
+    $(function() {
+        $('input[name="daterange"]').daterangepicker({
+            opens: 'right',
+            autoUpdateInput: false,
+            @role(['inkubator', 'mentor'])
+            @endrole
+            locale: {
+            cancelLabel: 'Clear'
+            },
+        }, function(start, end, label) {
+        console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        });
+
+        $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD MMM YYYY') + ' - ' + picker.endDate.format('DD MMM YYYY'));
+        });
+
+        $('input[name="daterange"]').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
     });
+
+    function getIds(checkboxName) {
+        let checkBoxes = document.getElementsByName(checkboxName);
+        let ids = Array.prototype.slice.call(checkBoxes)
+                        .filter(ch => ch.checked==true)
+                        .map(ch => ch.value);
+        return ids;
+    }
+
+    function filterResults () {
+        let priorityIds = getIds("tenant");
+        let title = $('input[name="titles"]').val();
+        let href = 'keuangan?';
+
+        if(priorityIds.length) {
+            href += 'filter[tenant]=' + priorityIds;
+        }
+        if(start !== ""){
+            let startDate = $('input[name="daterange"]').data('daterangepicker').startDate.format('YYYY-MM-DD');
+            let endDate = $('input[name="daterange"]').data('daterangepicker').endDate.format('YYYY-MM-DD');
+
+            href += '&filter[between]=' + startDate + ',' + endDate;
+        }
+
+        console.log(href);
+
+        document.location.href=href;
+    }
+
+    document.getElementById("filter").addEventListener("click", filterResults);
+
+    toastr.options = {
+        "debug": false,
+        //   "positionClass": "toast-bottom-full-width",
+        "onclick": null,
+        "showMethod": "slideDown",
+        "hideMethod": "slideUp",
+        "timeOut": 2000,
+        "extendedTimeOut": 1000
+    }
 </script>
 <script>
-    var grafik = <?php echo json_encode($grafik) ?>;
-    Highcharts.chart('chartKeuanganM', {
-        chart: {
-            type: 'column'
-        },
-        legend: {
-            borderRadius: 0,
-            x: 'right',
-            data: ['Bulan', 'Tahun']
-        },
-        title: {
-            text: 'Alur Kas'
-        },
-        grid: {
-            left: '8px',
-            right: '8px',
-            bottom: '0',
-            containLabel: true
-        },
-        xAxis: {
-            categories: [
-                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-            ],
-        },
-        yAxis: {
-            min: 0,
-            interval: 10000,
-            axisLine: {
-                show: false
-            },
+        var arus = <?php echo json_encode($arus)?>;
+        Highcharts.chart('chartKeuangan', {
+            chart: {
+                type: 'column'
+			},
+			legend: {
+				borderRadius: 0,
+				x: 'right',
+				data: ['Arus Kas', 'Laba Rugi']
+			},
             title: {
-                text: 'Jumlah Keuangan'
-            }
-        },
-        series: [{
-            name: 'Bulan',
-            data: grafik,
-            label: {
-                show: false,
-                color: '#0168c1'
+                @role('mentor')
+                text: 'Grafik Keuangan Tenant yang dibimbing'
+                @endrole
+                @role('inkubator')
+                text: 'Grafik Keuangan Seluruh Tenant'
+                @endrole
             },
-            barGap: 0,
-            color: '#7569b3',
-            smooth: true,
-            itemStyle: {
-                emphasis: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowOffsetY: -2,
-                    shadowColor: 'rgba(0, 0, 0, 0.3)'
+			grid: {
+				left: '8px',
+				right: '8px',
+				bottom: '0',
+				containLabel: true
+			},
+            xAxis: {
+                categories: {!! json_encode($categories) !!},
+			},
+            yAxis: {
+				min: 0,
+				interval: 10000,
+				axisLine: {
+					show: false
+				},
+                title: {
+                    text: 'Jumlah Keuangan'
                 }
-            }
-        }]
-    });
+            },
+			series: [{
+				name: 'Arus Kas',
+				data: arus,
+				label: {
+					show: false,
+					color: '#0168c1'
+				},
+				barGap: 0,
+				color: '#7569b3',
+				smooth: true,
+				itemStyle: {
+					emphasis: {
+						shadowBlur: 10,
+						shadowOffsetX: 0,
+						shadowOffsetY: -2,
+						shadowColor: 'rgba(0, 0, 0, 0.3)'
+					}
+                }
+            },{
+				name: 'Laba Rugi',
+				data: arus,
+				label: {
+					show: false,
+					color: '#0168c1'
+				},
+				barGap: 0,
+				color: '#7569b3',
+				smooth: true,
+				itemStyle: {
+					emphasis: {
+						shadowBlur: 10,
+						shadowOffsetX: 0,
+						shadowOffsetY: -2,
+						shadowColor: 'rgba(0, 0, 0, 0.3)'
+					}
+				}
+			}]
+        });
 </script>
 @endsection

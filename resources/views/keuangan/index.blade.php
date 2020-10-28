@@ -121,15 +121,6 @@
                         </tr>
                         @endforeach
 
-                        <tr>
-                            <td colspan="2"><b>
-                                    <h4>Total</h4>
-                                </b></td>
-                            <td><b>{{"Rp " . number_format($total_masuk,2,',','.') }}</b></td>
-                            <td><b>{{"Rp " . number_format($total_keluar,2,',','.') }}</b></td>
-                            <td colspan="2"><b>{{"Rp " . number_format($total,2,',','.') }}</b></td>
-                        </tr>
-
                     </tbody>
                 </table>
             </div>
