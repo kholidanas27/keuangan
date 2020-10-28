@@ -12,9 +12,17 @@
 <div class="alert alert-danger" role="alert">
     <strong>Berhasil!</strong> {{session('delete')}}
 </div>
-@elseif(session('status'))
+@elseif(session('successLaba'))
 <div class="alert alert-success" role="alert">
-    <strong>Berhasil!</strong> {{session('status')}}
+    <strong>Berhasil!</strong> {{session('successLaba')}}
+</div>
+@elseif(session('updateLaba'))
+<div class="alert alert-warning" role="alert">
+    <strong>Berhasil!</strong> {{session('updateLaba')}}
+</div>
+@elseif(session('deleteLaba'))
+<div class="alert alert-danger" role="alert">
+    <strong>Berhasil!</strong> {{session('deleteLaba')}}
 </div>
 @endif
 <div class="row">
@@ -114,7 +122,7 @@
                                 <img src="{{ asset('img/keuangan/'. $k->foto ) }}" width="150" height="100" alt="">
                             </td>
                             <td>
-                                <a class="ul-link-action text-success" type="button" data-toggle="modal" data-target="#arusEditModal{{ $k->id }}" name="create_record" id="create_record" href="#" data-placement="top" title="Edit"><i class="i-Edit"></i>
+                                <a class="ul-link-action text-success" type="button" data-toggle="tooltip" href="{{ route('tenant.editArus-id', $k->id )}}" data-placement="top" title="Edit"><i class="i-Edit"></i>
                                     <a class="ul-link-action text-danger mr-1 delete" href="{{ route('tenant.hapusArus-id', $k->id) }}" data-toggle="tooltip" data-placement="top" title="Want To Delete !!!">
                                         <i class="i-Eraser-2"></i></a>
                             </td>
@@ -140,46 +148,69 @@
                 </div>
             </div>
             <div class="card-body">
-                <table class="display table" id="ul-labarugi-list" style="width:100%;">
+                <table class="display table" id="ul-contact-list" style="width:100%;">
                     <thead>
                         <tr>
                             <th width="20%">Tanggal</th>
                             <th width="20%">Keterangan</th>
-                            <th width="15%">Pemasukan</th>
-                            <th width="15%">Pengeluaran</th>
-                            <th width="15%">Saldo</th>
-                            <th width="15%">Action</th>
+                            <th width="20%">Pemasukan</th>
+                            <th width="20%">Pengeluaran</th>
+                            <th width="10%">Foto</th>
+                            <th width="10%">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-
+                        @foreach($labaRugi as $b)
                         <tr>
                             <td>
-                                <a href="/mentor/pengumuman/">
-                                    <strong></strong>
-                                    <p></p>
-                                </a>
+                                {{ date('d F Y', strtotime($b->tanggal)) }}
                             </td>
                             <td>
-                                <a class="badge badge-success m-2 p-2" href="#"></a>
-                                <a class="badge badge-danger m-2 p-2" href="#"></a>
-                                <a class="badge badge-primary m-2 p-2" href="#"></a>
-                                <a class="badge badge-warning m-2 p-2" href="#"></a>
+                                <p>{{ $b->keterangan }}</p>
                             </td>
-                            <td></td>
+                            <td>
+                                @if($b->jenis == 1)
+                                {{ "Rp " . number_format($b->jumlah,2,',','.') }}
+                                @endif
+                            </td>
+                            <td>
+                                @if($b->jenis == 0)
+                                {{ "Rp " . number_format($b->jumlah,2,',','.') }}
+                                @endif
+                            </td>
+                            <td>
+                                <img src="{{ asset('img/keuangan/'. $b->foto ) }}" width="150" height="100" alt="">
+                            </td>
+                            <td>
+                                <a class="ul-link-action text-success" type="button" data-toggle="tooltip" href="{{ route('tenant.editLaba-id', $b->id) }}" data-placement="top" title="Edit"><i class="i-Edit"></i>
+                                    <a class="ul-link-action text-danger mr-1 delete" href="{{ route('tenant.hapusLaba-id', $b->id) }}" data-toggle="tooltip" data-placement="top" title="Want To Delete !!!">
+                                        <i class="i-Eraser-2"></i></a>
+                            </td>
                         </tr>
+                        @endforeach
+                        <tr>
+                            <td colspan="2"><b>
+                                    <h4>Jumlah</h4>
+                                </b></td>
+                            <td><b>{{"Rp " . number_format($masuk_labaRugi,2,',','.') }}</b></td>
+                            <td><b>{{"Rp " . number_format($keluar_labaRugi,2,',','.') }}</b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <h4>Laba Bersih</h4>
+                            </td>
+                            <td><b>{{"Rp " . number_format($totalLaba,2,',','.') }}</b></td>
                         </tr>
 
                     </tbody>
                 </table>
 
-
             </div>
         </div>
     </div>
 </div>
-<!-- MODAL ARUS KAS -->
-<!-- FORM INPUT -->
+<!-- MODAL -->
+<!-- FORM INPUT ARUS KAS -->
 <div class="modal fade" id="arusModal" tabindex="-1" role="dialog" aria-labelledby="arusModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -190,7 +221,6 @@
             <div class="modal-body">
                 <form method="post" id="sample_form" action="{{ route('tenant.storeArus')}} " enctype="multipart/form-data">
                     @csrf
-
                     <div class="form-group">
                         <label class="control-lable">Keterangan</label>
                         <input class="form-control @error('keterangan') is-invalid @enderror" type="text" placeholder="Keterangan..." name="keterangan" id="keterangan" value="{{ old('keterangan') }}" required />
@@ -204,8 +234,8 @@
                         <label class="control-lable">Jenis</label>
                         <select class="form-control @error('jenis') is-invalid @enderror" name="jenis" id="jenis" required>
                             <option selected="" disabled="">Pilih Jenis</option>
-                            <option value="0" name="pemasukan" id="pemasukan">Pemasukan</option>
-                            <option value="1" name="pengeluaran" id="pengeluaran">Pengeluaran</option>
+                            <option value="1" name="pemasukan" id="pemasukan">Pemasukan</option>
+                            <option value="0" name="pengeluaran" id="pengeluaran">Pengeluaran</option>
                         </select>
                         @if($errors->has('jenis'))
                         <div class="text-danger">
@@ -263,80 +293,18 @@
         </div>
     </div>
 </div>
-<!-- END FORM INPUT -->
-<!-- FORM EDIT -->
-@foreach($keuangan as $k)
-<div class="modal fade" id="arusEditModal{{ $k->id }}" tabindex="-1" role="dialog" aria-labelledby="arusEditModalLabel{{ $k->id }}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="arusEditModalLabel{{ $k->id }}">Edit Data Arus Kas</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <form method="post" action="{{ route('tenant.updateArus-id', $k->id )}}" enctype="multipart/form-data">
-                    {{ csrf_field() }}
-                    {{ method_field('PUT') }}
-
-                    <div class="form-group">
-                        <label class="control-lable">Keterangan</label>
-                        <input class="form-control" type="text" value="{{ $k->keterangan }}" placeholder="Keterangan...." name="keterangan" id="keterangan">
-                        {{ $errors->first('keterangan')}}
-                    </div>
-                    <div class="form-group">
-                        <label class="control-lable">Jenis</label>
-                        <select class="form-control @error('jenis') is-invalid @enderror" name="jenis" id="jenis" required>
-                            <option selected="" disabled="">Pilih Jenis</option>
-                            <option value="{{ $k->id  }}" {{($k->id) ? 'selected' : ''}}>Pemasukan</option>
-                            <option value="{{ $k->id  }}" {{($k->id) ? 'selected' : ''}}>Pengeluaran</option>
-                        </select>
-                        {{ $errors->first('jenis')}}
-                    </div>
-                    <div class="form-group">
-                        <label class="control-lable">Jumlah</label>
-                        <input class="form-control" type="text" value="{{ $k->jumlah }}" placeholder="Jumlah...." name="jumlah" id="jumlah">
-                        {{ $errors->first('jumlah')}}
-                    </div>
-                    <div class="form-group">
-                        <label class="control-lable">Tanggal</label>
-                        <input class="form-control datepicker " value="{{ $k->tanggal }}" type="text" rows="3" autocomplete="off" placeholder="Tanggal...." name="tanggal" id="datepicker">
-                        {{ $errors->first('tanggal')}}
-                    </div>
-                    <div class="custom-file">
-                        <label class="custom-file-label" for="exampleInputFile">{{$k->foto}}</label>
-                        <input type="file" class="custom-file-input" id="exampleInputFile" name="foto" multiple>
-                        <object data="/img/keuangan/{{ $k->foto }}" width="400px"></object>
-                        <input type="hidden" class="custom-file-input" id="hidden_image" name="hidden_image" value="{{ $k->foto }}">
-                        {{ $errors->first('foto')}}
-                    </div>
-                    @foreach($user as $u)
-                    <input type="hidden" name="tenant_id" id="tenant_id" value="{{ $u->tenant_id }}" />
-                    @endforeach
-                    <div class="modal-footer">
-                        <a href="{{ route('tenant.keuangan') }}"><button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button></a>
-                        <button class="btn btn-primary" type="submit">
-                            Simpan
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-@endforeach
-<!-- END FORM EDIT -->
+<!-- END FORM INPUT ARUS KAS -->
 <!-- MODAL LABA RUGI -->
 <div class="modal fade" id="labaModal" tabindex="-1" role="dialog" aria-labelledby="labaModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="labaModalLabel">Tambah Data Arus Kas</h5>
+                <h5 class="modal-title" id="labaModalLabel">Tambah Data Laba Rugi</h5>
                 <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
-                <form method="post" id="laba_form" action="" enctype="multipart/form-data">
+                <form method="post" id="laba_form" action="{{ route('tenant.storeLaba')}}" enctype="multipart/form-data">
                     @csrf
-
                     <div class="form-group">
                         <label class="control-lable">Keterangan</label>
                         <input class="form-control @error('keterangan') is-invalid @enderror" type="text" placeholder="Keterangan..." name="keterangan" id="keterangan" value="{{ old('keterangan') }}" required />
@@ -350,8 +318,8 @@
                         <label class="control-lable">Jenis</label>
                         <select class="form-control @error('jenis') is-invalid @enderror" name="jenis" id="jenis" required>
                             <option selected="" disabled="">Pilih Jenis</option>
-                            <option value="0" name="pemasukan" id="pemasukan">Pemasukan</option>
-                            <option value="1" name="pengeluaran" id="pengeluaran">Pengeluaran</option>
+                            <option value="1" name="pemasukan" id="pemasukan">Pemasukan</option>
+                            <option value="0" name="pengeluaran" id="pengeluaran">Pengeluaran</option>
                         </select>
                         @if($errors->has('jenis'))
                         <div class="text-danger">
@@ -377,7 +345,7 @@
                         </div>
                         @endif
                     </div>
-                    <div class="input-group image-preview">
+                    <div class="input-group image-preview-laba">
                         <input type="text" class="form-control image-preview-filename" disabled="disabled" placeholder="Bukti Transaksi....">
                         <span class="input-group-btn">
                             <!-- image-preview-clear button -->
@@ -397,8 +365,8 @@
                         {{ $errors->first('file')}}
                     </div>
                     @endif
-                    @foreach($user as $u)
-                    <input type="hidden" name="tenant_id" id="tenant_id" value="{{ $u->tenant_id }}" />
+                    @foreach($userId as $i)
+                    <input type="hidden" name="tenant_id" id="tenant_id" value="{{ $i->tenant_id }}" />
                     @endforeach
                     <div class="modal-footer">
                         <a href="{{ route('tenant.keuangan') }}"><button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button></a>
@@ -462,7 +430,99 @@
             $(this).remove();
         });
     }, 1500);
+    $('#ul-contact-list').DataTable({
+        responsive: true,
+        order: [
+            [2, 'DESC']
+        ]
+    });
+    $('#ul-labarugi-list').DataTable({
+        responsive: true,
+        order: [
+            [2, 'DESC']
+        ]
+    });
+</script>
+<script>
+    // <!-- MODAL ARUS KAS-->
+    $(document).ready(function() {
+        @if(Session::has('errors'))
+        $('#arusModal').modal('show');
+        @endif
+    });
+    $(".custom-file-input").on("change", function() {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+    //JS FORM INPUT
 
+    $(document).on('click', '#close-preview', function() {
+        $('.image-preview').popover('hide');
+        // Hover befor close the preview
+        $('.image-preview').hover(
+            function() {
+                $('.image-preview').popover('show');
+            },
+            function() {
+                $('.image-preview').popover('hide');
+            }
+        );
+    });
+    $(function() {
+        // Create the close button
+        var closebtn = $('<button/>', {
+            type: "button",
+            text: 'x',
+            id: 'close-preview',
+            style: 'font-size: initial;',
+        });
+        closebtn.attr("class", "close pull-right");
+        // Set the popover default content
+        $('.image-preview').popover({
+            trigger: 'manual',
+            html: true,
+            title: "<strong>Preview</strong>" + $(closebtn)[0].outerHTML,
+            content: "There's no image",
+            placement: 'bottom'
+        });
+        // Clear event
+        $('.image-preview-clear').click(function() {
+            $('.image-preview').attr("data-content", "").popover('hide');
+            $('.image-preview-filename').val("");
+            $('.image-preview-clear').hide();
+            $('.image-preview-input input:file').val("");
+            $(".image-preview-input-title").text("Browse");
+        });
+        // Create the preview image
+        $(".image-preview-input input:file").change(function() {
+            var object = $('<object/>', {
+                id: 'dynamic',
+                width: 250,
+                height: 200
+            });
+            var file = this.files[0];
+            var reader = new FileReader();
+            // Set preview image into the popover data-content
+            reader.onload = function(e) {
+                $(".image-preview-input-title").text("Change");
+                $(".image-preview-clear").show();
+                $(".image-preview-filename").val(file.name);
+                object.attr('data', e.target.result);
+                $(".image-preview").attr("data-content", $(object)[0].outerHTML).popover("show");
+            }
+            reader.readAsDataURL(file);
+        });
+    });
+</script>
+<script>
+    // <!-- MODAL LABA RUGI-->
+    $(document).ready(function() {
+        @if(Session::has('errors'))
+        $('#labaModal').modal('show');
+        @endif
+    });
+</script>
+<script>
     $('.delete').on("click", function(event) {
         event.preventDefault();
         const url = $(this).attr('href');
@@ -484,7 +544,8 @@
             }
         });
     });
-
+</script>
+<script>
     var grafik = <?php echo json_encode($grafik) ?>;
     Highcharts.chart('chartKeuangan', {
         chart: {
@@ -540,139 +601,12 @@
         }]
     });
 </script>
-
-<script>
-    $('#ul-contact-list').DataTable({
-        responsive: true,
-        order: [
-            [2, 'DESC']
-        ]
-    });
-
-    $('#ul-labarugi-list').DataTable({
-        responsive: true,
-        order: [
-            [2, 'DESC']
-        ]
-    });
-</script>
-
-<!-- MODAL -->
-<script>
-    $(document).ready(function() {
-        @if(Session::has('errors'))
-        $('#arusModal').modal('show');
-        @endif
-    });
-
-    $(document).ready(function() {
-        @if(Session::has('errors'))
-        $('#arusEditModal{{ $k->id }}').modal('show');
-        @endif
-    });
-
-    // $('body').on('click', '#edit-customer', function() {
-    //     var customer_id = $(this).data('id');
-    //     $.get('customers/' + customer_id + '/edit', function(data) {
-    //         $('#customerCrudModal').html("Edit customer");
-    //         $('#btn-update').val("Update");
-    //         $('#btn-save').prop('disabled', false);
-    //         $('#crud-modal').modal('show');
-    //         $('#cust_id').val(data.id);
-    //         $('#name').val(data.name);
-    //         $('#email').val(data.email);
-    //         $('#address').val(data.address);
-    //     })
-    // });
-
-    $(".custom-file-input").on("change", function() {
-        var fileName = $(this).val().split("\\").pop();
-        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-    });
-</script>
-
-<script>
-    $(document).ready(function() {
-        @if(Session::has('errors'))
-        $('#labaModal').modal('show');
-        @endif
-    });
-
-    $(".custom-file-input").on("change", function() {
-        var fileName = $(this).val().split("\\").pop();
-        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-    });
-</script>
-
 <script>
     $(function() {
         $(".datepicker").datepicker({
             format: 'yyyy-mm-dd',
             autoclose: true,
             todayHighlight: true,
-        });
-    });
-</script>
-
-<script>
-    //JS FORM INPUT
-
-    $(document).on('click', '#close-preview', function() {
-        $('.image-preview').popover('hide');
-        // Hover befor close the preview
-        $('.image-preview').hover(
-            function() {
-                $('.image-preview').popover('show');
-            },
-            function() {
-                $('.image-preview').popover('hide');
-            }
-        );
-    });
-
-    $(function() {
-        // Create the close button
-        var closebtn = $('<button/>', {
-            type: "button",
-            text: 'x',
-            id: 'close-preview',
-            style: 'font-size: initial;',
-        });
-        closebtn.attr("class", "close pull-right");
-        // Set the popover default content
-        $('.image-preview').popover({
-            trigger: 'manual',
-            html: true,
-            title: "<strong>Preview</strong>" + $(closebtn)[0].outerHTML,
-            content: "There's no image",
-            placement: 'bottom'
-        });
-        // Clear event
-        $('.image-preview-clear').click(function() {
-            $('.image-preview').attr("data-content", "").popover('hide');
-            $('.image-preview-filename').val("");
-            $('.image-preview-clear').hide();
-            $('.image-preview-input input:file').val("");
-            $(".image-preview-input-title").text("Browse");
-        });
-        // Create the preview image
-        $(".image-preview-input input:file").change(function() {
-            var object = $('<object/>', {
-                id: 'dynamic',
-                width: 250,
-                height: 200
-            });
-            var file = this.files[0];
-            var reader = new FileReader();
-            // Set preview image into the popover data-content
-            reader.onload = function(e) {
-                $(".image-preview-input-title").text("Change");
-                $(".image-preview-clear").show();
-                $(".image-preview-filename").val(file.name);
-                object.attr('data', e.target.result);
-                $(".image-preview").attr("data-content", $(object)[0].outerHTML).popover("show");
-            }
-            reader.readAsDataURL(file);
         });
     });
 </script>
