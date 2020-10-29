@@ -31,11 +31,14 @@ class KeuanganController extends Controller
     //FUNCTION INKUBATOR
     public function indexInkubator()
     {
+        // Menampilkan Data Kedalam Grafik
         $categories = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
         for($bulan=1;$bulan < 13;$bulan++){
-            $masuk     = collect(DB::SELECT("SELECT SUM(jumlah) AS jumlah from arus_kas where month(tanggal)='$bulan'"))->first();
-            $arus[] = $masuk->jumlah;
-         }
+            $masuk     = collect(DB::SELECT("SELECT SUM(IF(jenis='1', jumlah, 0)) AS totalMasuk from arus_kas where Month(tanggal)='$bulan'"))->first();
+            $keluar     = collect(DB::SELECT("SELECT SUM(IF(jenis='0', jumlah, 0)) AS totalKeluar from arus_kas where Month(tanggal)='$bulan'"))->first();
+            $arusMasuk[] = $masuk->totalMasuk;
+            $arusKeluar[] = $keluar->totalKeluar;
+        }
         // $masuk = Keuangan::select(DB::raw("(SELECT SUM(jumlah) AS masuk FROM arus_kas WHERE jenis='1') as count"))
         //     ->whereYear('tanggal', date('Y'))
         //     ->groupBy(DB::raw("Month(tanggal)", "asc"))
@@ -89,7 +92,7 @@ class KeuanganController extends Controller
         $saldo_kas = $kas_masuk - $kas_keluar;
 
         
-        return view('keuangan.mentor.index', compact('keuangan','tenant','categories', 'arus', "total", 'total_masuk', 'total_keluar', 'saldo_kas', 'kas_masuk', 'kas_keluar'));
+        return view('keuangan.mentor.index', compact('keuangan','tenant','categories', 'arusMasuk','arusKeluar','total', 'total_masuk', 'total_keluar', 'saldo_kas', 'kas_masuk', 'kas_keluar'));
     }
     // Fungsi Filter Inkubator
     public function inkubatorFilter(Request $request){
@@ -105,10 +108,13 @@ class KeuanganController extends Controller
         }
         $keuangan = $keuangan->get();
         
-        $grafik = Keuangan::select(DB::raw("(SUM(jumlah)) as count"))
-            ->whereYear('tanggal', '=', $year)
-            ->groupBy(DB::raw("Month(tanggal)", "jenis", "asc"))
-            ->pluck('count');
+        $categories = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        for($bulan=1;$bulan < 13;$bulan++){
+            $masuk     = collect(DB::SELECT("SELECT SUM(IF(jenis='1', jumlah, 0)) AS totalMasuk from arus_kas where Month(tanggal)='$bulan'"))->first();
+            $keluar     = collect(DB::SELECT("SELECT SUM(IF(jenis='0', jumlah, 0)) AS totalKeluar from arus_kas where Month(tanggal)='$bulan'"))->first();
+            $arusMasuk[] = $masuk->totalMasuk;
+            $arusKeluar[] = $keluar->totalKeluar;
+        }
 
         // Menampilkan Data Keuangan
         $pendapatan = Keuangan::orderBy('tanggal', 'asc')->get();
@@ -145,7 +151,7 @@ class KeuanganController extends Controller
 
         $saldo_kas = $kas_masuk - $kas_keluar;        
         
-        return view('keuangan.mentor.index',  compact('keuangan','tenant', 'grafik', "total", 'total_masuk', 'total_keluar'));
+        return view('keuangan.mentor.index',  compact('keuangan','tenant', 'arusMasuk','arusKeluar','categories', 'total', 'total_masuk', 'total_keluar'));
     }
 
     // Fungsi Filter Mentor
@@ -172,14 +178,11 @@ class KeuanganController extends Controller
         $grafik = DB::table('tenant_mentor')
             ->join('arus_kas', 'tenant_mentor.tenant_id', '=', 'arus_kas.tenant_id')
             ->join('users', 'tenant_mentor.user_id', '=', 'users.id')
-            ->select(DB::raw("(SUM(jumlah)) as count"))
             ->where([
                 ['user_id', \Auth::user()->id]
             ])
-            ->whereYear('tanggal', date('Y'))
-            ->groupBy(DB::raw("Month(tanggal)", "asc"))
-            // ->where('tenant_id', $keuangan->tenant_id)
-            ->pluck('count');
+            ->get();
+
 
         // Menampilkan Data Keuangan
         $pendapatan = Keuangan::orderBy('tanggal', 'asc')->get();
@@ -245,18 +248,25 @@ class KeuanganController extends Controller
             ->get();
 
         // Menampilkan Data Keuangan Pada Bagian Grafik
+        for($bulan=1;$bulan < 13;$bulan++){
         $grafik = DB::table('tenant_mentor')
             ->join('arus_kas', 'tenant_mentor.tenant_id', '=', 'arus_kas.tenant_id')
             ->join('users', 'tenant_mentor.user_id', '=', 'users.id')
-            ->select(DB::raw("(SUM(jumlah)) as count"))
+            ->select(DB::raw("SUM(IF(jenis='1', jumlah, 0)) AS totalMasuk"))
             ->where([
-                ['user_id', \Auth::user()->id]
+                ['user_id', \Auth::user()->id],
             ])
-            ->whereYear('tanggal', date('Y'))
-            ->groupBy(DB::raw("Month(tanggal)", "asc"))
-            // ->where('tenant_id', $keuangan->tenant_id)
-            ->pluck('count');
-        // dd($tenant);
+            // ->whereMonth('tanggal', '=', $bulan)
+            ->get();
+        }
+        $categories = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        for($bulan=1;$bulan < 13;$bulan++){
+            $grafik     = collect(DB::SELECT("SELECT SUM(IF(jenis='1', jumlah, 0)) AS totalMasuk from arus_kas where Month(tanggal)='$bulan'"))->first();
+            $arusMasuk[] = $grafik->totalMasuk;
+            $grafik     = collect(DB::SELECT("SELECT SUM(IF(jenis='0', jumlah, 0)) AS totalKeluar from arus_kas where Month(tanggal)='$bulan'"))->first();
+            $arusKeluar[] = $grafik->totalKeluar;
+        }
+        dd($arusKeluar);
 
         // Menghitung Total Pada Bagian Table
         $total_masuk = 0;
@@ -272,7 +282,7 @@ class KeuanganController extends Controller
 
         $total = $total_masuk - $total_keluar;
 
-        return view('keuangan.mentor.index', compact('keuangan','tenant', 'total', 'total_masuk', 'total_keluar', 'grafik'));
+        return view('keuangan.mentor.index', compact('keuangan','tenant','arusMasuk','arusKeluar','categories', 'total', 'total_masuk', 'total_keluar', 'grafik'));
     }
 
     //FUNCTION TENANT

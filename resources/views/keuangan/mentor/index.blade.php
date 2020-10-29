@@ -75,7 +75,7 @@
             </div>
         </div>
         @endrole -->
-        @role(['inkubator', 'mentor'])
+
         <div class="card mb-4">
 			<div class="card-header container-fluid">
 			  <div class="row">
@@ -85,7 +85,13 @@
 			  </div>
             </div>
 			<div class="card-body">
-            <form action="{{ route('inbox.filter') }}" method="GET" class="form-group">
+            @role(['inkubator'])
+            <form action="{{ route('inkubator.filter') }}" method="GET" class="form-group">
+            @endrole
+            @role(['mentor'])
+            <form action="{{ route('mentor.filter') }}" method="GET" class="form-group">
+            @endrole
+
                 {{ csrf_field() }}
                 <select style="cursor:pointer;" class="form-control" id="tag_select" name="year">
                     <option value="0" selected disabled> Pilih Tahun</option>
@@ -117,7 +123,7 @@
             </form>
             </div>
         </div>
-        @endrole
+
 
 	</div>
 	<div class="col-md-9">
@@ -335,7 +341,8 @@
     }
 </script>
 <script>
-        var arus = <?php echo json_encode($arus)?>;
+        var arusMasuk = <?php echo json_encode($arusMasuk)?>;
+        var arusKeluar = <?php echo json_encode($arusKeluar)?>;
         Highcharts.chart('chartKeuangan', {
             chart: {
                 type: 'column'
@@ -373,8 +380,8 @@
                 }
             },
 			series: [{
-				name: 'Arus Kas',
-				data: arus,
+				name: 'Arus Kas Masuk',
+				data: arusMasuk,
 				label: {
 					show: false,
 					color: '#0168c1'
@@ -391,14 +398,14 @@
 					}
                 }
             },{
-				name: 'Laba Rugi',
-				data: arus,
+				name: 'Arus Kas Keluar',
+				data: arusKeluar,
 				label: {
 					show: false,
 					color: '#0168c1'
 				},
 				barGap: 0,
-				color: '#7569b3',
+				color: '#bcbbdd',
 				smooth: true,
 				itemStyle: {
 					emphasis: {
