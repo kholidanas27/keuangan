@@ -546,7 +546,9 @@
     });
 </script>
 <script>
-    var grafik = <?php echo json_encode($grafik) ?>;
+    var arusMasuk = <?php echo json_encode($arusMasuk) ?>;
+    var arusKeluar = <?php echo json_encode($arusKeluar) ?>;
+    var categories = <?php echo json_encode($categories) ?>;
     Highcharts.chart('chartKeuangan', {
         chart: {
             type: 'column'
@@ -554,7 +556,7 @@
         legend: {
             borderRadius: 0,
             x: 'right',
-            data: ['Bulan', 'Tahun']
+            data: ['Arus Kas Masuk', 'Arus Kas Keluar']
         },
         title: {
             text: 'Alur Kas'
@@ -566,9 +568,7 @@
             containLabel: true
         },
         xAxis: {
-            categories: [
-                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-            ],
+            categories: categories,
         },
         yAxis: {
             min: 0,
@@ -581,14 +581,32 @@
             }
         },
         series: [{
-            name: 'Bulan',
-            data: grafik,
+            name: 'Arus Kas Masuk',
+            data: arusMasuk,
             label: {
                 show: false,
                 color: '#0168c1'
             },
             barGap: 0,
             color: '#7569b3',
+            smooth: true,
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowOffsetY: -2,
+                    shadowColor: 'rgba(0, 0, 0, 0.3)'
+                }
+            }
+        },{
+            name: 'Arus Kas Keluar',
+            data: arusKeluar,
+            label: {
+                show: false,
+                color: '#0168c1'
+            },
+            barGap: 0,
+            color: '#bcbbdd',
             smooth: true,
             itemStyle: {
                 emphasis: {
