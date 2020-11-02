@@ -27,7 +27,7 @@
             <div class="card-body text-center"><i class="i-Money-2"></i>
                 <div class="content">
                     <p class="text-muted">Saldo Kas</p>
-                    <p class="text-primary">{{"Rp " . number_format($total,2,',','.') }}</p>
+                    <p class="text-primary">{{"Rp " . number_format($saldo_kas,2,',','.') }}</p>
                 </div>
             </div>
         </div>
@@ -57,10 +57,6 @@
 			  </div>
             </div>
 			<div class="card-body">
-                <div class="form-group">
-                    <label for="daterange">Rentang tanggal</label>
-                    <input type="text" name="daterange" class="form-control" placeholder="set tanggal" >
-                </div>
                 <div class="form-group">
                 @role(['inkubator'])
                 <form action="{{ route('inkubator.filter') }}" method="GET" class="form-group">
@@ -95,72 +91,21 @@
                         }
                         ?>
                     </select>
-                </form>
-                </div>
-                <div class="form-group">
                     <label for="tenant">Tenant</label>
                     @foreach ($tenant as $item)
                         <label class="checkbox checkbox-success">
-                            <input type="checkbox" name="tenant" value="{{ $item->id }}"/><span>{{ $item->title }}</span><span class="checkmark"></span>
+                            <input type="checkbox" name="tenant" value="{{ $item->id }}"
+                                @if (in_array($item->id, explode(',', request()->input('filter.tenant'))))
+                                    checked
+                                @endif/><span>{{ $item->title }}</span><span class="checkmark"></span>
                         </label>
                     @endforeach
-                </div>
-                <div class="form-group">
-                    <button id="filter" class="btn btn-primary">Filter</button>
+                    <input class="btn btn-primary" name="submit" type="submit" value="Filter"/>
+                </form>
                 </div>
             </div>
         </div>
         @endrole
-
-        <div class="card mb-4">
-			<div class="card-header container-fluid">
-			  <div class="row">
-				<div class="col">
-				  <h3>Filter</h3>
-				</div>
-			  </div>
-            </div>
-			<div class="card-body">
-            @role(['inkubator'])
-            <form action="{{ route('inkubator.filter') }}" method="GET" class="form-group">
-            @endrole
-            @role(['mentor'])
-            <form action="{{ route('mentor.filter') }}" method="GET" class="form-group">
-            @endrole
-
-                {{ csrf_field() }}
-                <select style="cursor:pointer;" class="form-control" id="tag_select" name="year">
-                    <option value="0" selected disabled> Pilih Tahun</option>
-                    <?php 
-                    $year = date('Y');
-                    $min = $year - 60;
-                    $max = $year;
-                    for( $i=$max; $i>=$min; $i-- ) {
-                    echo '<option value='.$i.'>'.$i.'</option>';
-                    }
-                    ?>
-                </select>
-                <select style="cursor:pointer;margin-top:1.5em;margin-bottom:1.5em;" class="form-control" id="tag_select" name="month">
-                    <option value="0" selected disabled> Pilih Bulan</option>
-                    <option value="01"> Januari</option>
-                    <option value="02"> Februari</option>
-                    <option value="03"> Maret</option>
-                    <option value="04"> April</option>
-                    <option value="05"> Mei</option>
-                    <option value="06"> Juni</option>
-                    <option value="07"> Juli</option>
-                    <option value="08"> Agustus</option>
-                    <option value="09"> September</option>
-                    <option value="10"> Oktober</option>
-                    <option value="11"> November</option>
-                    <option value="12"> Desember</option>
-                </select>
-                <input class="btn btn-primary" name="submit" type="submit" value="Filter"/>
-            </form>
-            </div>
-        </div>
-
-
 	</div>
 	<div class="col-md-9">
         <div id="task-manager-list">
@@ -303,12 +248,6 @@
                 "scrollX": true
             }
         );
-
-        $(".custom-file-input").on("change", function() {
-            var fileName = $(this).val().split("\\").pop();
-            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-        });
-        CKEDITOR.replace('event');
     });
     
     // $('#btnModal').on('click', function(){
@@ -345,20 +284,12 @@
     }
 
     function filterResults () {
-        let priorityIds = getIds("tenant");
-        let title = $('input[name="titles"]').val();
+        let tenantIds = getIds("tenant");
         let href = 'keuangan?';
 
-        if(priorityIds.length) {
-            href += 'filter[tenant]=' + priorityIds;
+        if(tenantIds.length) {
+            href += 'filter[tenant]=' + tenantIds;
         }
-        if(start !== ""){
-            let startDate = $('input[name="daterange"]').data('daterangepicker').startDate.format('YYYY-MM-DD');
-            let endDate = $('input[name="daterange"]').data('daterangepicker').endDate.format('YYYY-MM-DD');
-
-            href += '&filter[between]=' + startDate + ',' + endDate;
-        }
-
         console.log(href);
 
         document.location.href=href;
