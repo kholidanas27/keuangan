@@ -129,8 +129,8 @@ Route::group(['prefix' => 'mentor', 'middleware' => ['role:mentor']], function (
 	Route::get('/', 'Mentor\HomeController@index')->name('mentor.home');
 	Route::get('/chat', 'Chat\ChatController@index')->name('mentor.chat');
 	// Route Keuangan Mentor
-	Route::get('/keuangan', 'Keuangan\KeuanganController@indexMentor')->name('mentor.keuangan');
-	Route::get('/keuangan/filter', 'Keuangan\KeuanganController@mentorFilter')->name('mentor.filter');
+	Route::get('/arus-kas', 'Keuangan\KeuanganController@indexMentor')->name('mentor.arus');
+	Route::get('/filter-arus', 'Keuangan\KeuanganController@mentorFilter')->name('mentor.filter-arus');
 
 	//route surat mentor
 	Route::get('/suratmasuk', 'Persuratan\DisposisiController@mentorsuratmasuk');

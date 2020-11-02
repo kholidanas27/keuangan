@@ -62,7 +62,7 @@
                 <form action="{{ route('inkubator.filter') }}" method="GET" class="form-group">
                 @endrole
                 @role(['mentor'])
-                <form action="{{ route('mentor.filter') }}" method="GET" class="form-group">
+                <form action="{{ route('mentor.filter-arus') }}" method="GET" class="form-group">
                 @endrole
                     {{ csrf_field() }}
                     <select style="cursor:pointer;margin-top:1.5em;margin-bottom:1.5em;" class="form-control" id="tag_select" name="month">
