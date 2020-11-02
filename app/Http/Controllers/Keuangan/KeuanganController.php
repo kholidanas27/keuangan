@@ -80,7 +80,7 @@ class KeuanganController extends Controller
         // dd($saldo_kas);
         // DATA TABLE LABA RUGI
 
-        return view('keuangan.mentor.index', compact('keuangan','tenant','categories', 'arusMasuk','arusKeluar','totalArus','total', 'total_masuk', 'total_keluar', 'saldo_kas', 'kas_masuk', 'kas_keluar'));
+        return view('keuangan.dashboard.arus_kas', compact('keuangan','tenant','categories', 'arusMasuk','arusKeluar','totalArus','total', 'total_masuk', 'total_keluar', 'saldo_kas', 'kas_masuk', 'kas_keluar'));
     }
     // Fungsi Filter Inkubator
     public function inkubatorFilter(Request $request){
@@ -142,7 +142,7 @@ class KeuanganController extends Controller
         // dd($saldo_kas);
         // DATA TABLE LABA RUGI
 
-        return view('keuangan.mentor.index',  compact('keuangan','tenant', 'arusMasuk','arusKeluar','saldo_kas','categories', 'total', 'total_masuk', 'total_keluar'));
+        return view('keuangan.dashboard.arus_kas',  compact('keuangan','tenant', 'arusMasuk','arusKeluar','saldo_kas','categories', 'total', 'total_masuk', 'total_keluar'));
     }
 
     // Fungsi Filter Mentor
@@ -199,7 +199,14 @@ class KeuanganController extends Controller
         }
 
         // Menampilkan Data Keuangan
-        $pendapatan = Keuangan::orderBy('tanggal', 'asc')->get();
+        $pendapatan = DB::table('tenant_mentor')
+            ->join('arus_kas', 'tenant_mentor.tenant_id', '=', 'arus_kas.tenant_id')
+            ->join('users', 'tenant_mentor.user_id', '=', 'users.id')
+            ->join('tenant', 'tenant_mentor.tenant_id', '=', 'tenant.id')            
+            ->select('users.id', 'tenant_mentor.user_id', 'arus_kas.*', 'tenant.*')
+            ->where([
+                ['user_id', \Auth::user()->id]
+            ])->get();
         // dd($keuangan);
         
         // Menampilkan Tenant
@@ -242,7 +249,7 @@ class KeuanganController extends Controller
         
         // DATA TABLE LABA RUGI
         
-        return view('keuangan.mentor.index',  compact('keuangan','tenant', 'arusMasuk','arusKeluar','categories','saldo_kas', 'total', 'total_masuk', 'total_keluar'));
+        return view('keuangan.dashboard.arus_kas',  compact('keuangan','tenant', 'arusMasuk','arusKeluar','categories','saldo_kas', 'total', 'total_masuk', 'total_keluar'));
     }
 
     //FUNCTION MENTOR
@@ -302,7 +309,14 @@ class KeuanganController extends Controller
             $arusKeluar[] = $keluar->totalKeluar;
         }
         // dd($arusMasuk);
-
+        $pendapatan = DB::table('tenant_mentor')
+            ->join('arus_kas', 'tenant_mentor.tenant_id', '=', 'arus_kas.tenant_id')
+            ->join('users', 'tenant_mentor.user_id', '=', 'users.id')
+            ->join('tenant', 'tenant_mentor.tenant_id', '=', 'tenant.id')            
+            ->select('users.id', 'tenant_mentor.user_id', 'arus_kas.*', 'tenant.*')
+            ->where([
+                ['user_id', \Auth::user()->id]
+            ])->get();
         // Menghitung Total Pada Bagian Table
         $total_masuk = 0;
         $total_keluar = 0;
@@ -333,7 +347,7 @@ class KeuanganController extends Controller
 
         // DATA TABLE ARUS KAS
         
-        return view('keuangan.mentor.index', compact('keuangan','tenant','saldo_kas','kas_masuk','kas_keluar','arusMasuk','arusKeluar','categories', 'total', 'total_masuk', 'total_keluar'));
+        return view('keuangan.dashboard.arus_kas', compact('keuangan','tenant','saldo_kas','kas_masuk','kas_keluar','arusMasuk','arusKeluar','categories', 'total', 'total_masuk', 'total_keluar'));
     }
 
     //FUNCTION TENANT
