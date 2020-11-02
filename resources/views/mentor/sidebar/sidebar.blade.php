@@ -61,7 +61,11 @@
                                 </ul>
                             </li>
                             <!--  <p class="main-menu-title text-muted ml-3 font-weight-700 text-13 mt-4 mb-2">UI Elements</p> -->
-                            <li class="Ul_li--hover"><a class="" href="{{ route('mentor.keuangan')}}"><i class="i-Computer-Secure text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Keuangan</span></a>
+                            <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-File-Horizontal-Text text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Keuangan</span></a>
+                                <ul class="mm-collapse">
+                                    <li class="item-name"><a href="{{ route('mentor.keuangan')}}"><i class="nav-icon i-Error-404-Window"></i><span class="item-name">Arus Kas</span></a></li>
+                                    <li class="item-name"><a href="#"><i class="nav-icon i-Male"></i><span class="item-name">Laba Rugi</span></a></li>
+                                </ul>
                             </li>
                             <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-File-Clipboard-File--Text text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Produksi</span></a>
                                 <ul class="mm-collapse">
