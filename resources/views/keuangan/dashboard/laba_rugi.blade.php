@@ -6,8 +6,8 @@
         <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
             <div class="card-body text-center"><i class="i-Add-User"></i>
                 <div class="content">
-                    <p class="text-muted">Kas Masuk</p>
-                    <p class="text-primary">{{"Rp " . number_format($total_masuk,2,',','.') }}</p>
+                    <p class="text-muted">Penghasilan</p>
+                    <p class="text-primary">{{"Rp " . number_format($masuk_labaRugi,2,',','.') }}</p>
                 </div>
             </div>
         </div>
@@ -16,8 +16,8 @@
         <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
             <div class="card-body text-center"><i class="i-Financial"></i>
                 <div class="content">
-                    <p class="text-muted">Kas Keluar</p>
-                    <p class="text-primary">{{"Rp ". number_format($total_keluar,2,',','.') }}</p>
+                    <p class="text-muted">Beban</p>
+                    <p class="text-primary">{{"Rp ". number_format($keluar_labaRugi,2,',','.') }}</p>
                 </div>
             </div>
         </div>
@@ -26,8 +26,8 @@
         <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
             <div class="card-body text-center"><i class="i-Money-2"></i>
                 <div class="content">
-                    <p class="text-muted">Saldo Kas</p>
-                    <p class="text-primary">{{"Rp " . number_format($saldo_kas,2,',','.') }}</p>
+                    <p class="text-muted">Laba Bersih</p>
+                    <p class="text-primary">{{"Rp " . number_format($laba_bersih,2,',','.') }}</p>
                 </div>
             </div>
         </div>
@@ -62,7 +62,7 @@
                 <form action="{{ route('inkubator.filter') }}" method="GET" class="form-group">
                 @endrole
                 @role(['mentor'])
-                <form action="{{ route('mentor.filter-arus') }}" method="GET" class="form-group">
+                <form action="{{ route('mentor.filter-laba') }}" method="GET" class="form-group">
                 @endrole
                     {{ csrf_field() }}
                     <select style="cursor:pointer;margin-top:1.5em;margin-bottom:1.5em;" class="form-control" id="tag_select" name="month">
@@ -118,52 +118,56 @@
                             <table class="display table" id="names" style="width: 100%">
                                 <thead>
                                     <tr>
-                                        <th width="15%">Tanggal</th>
-                                        <th width="15%">Keterangan</th>
-                                        <th width="20%">Pemasukan</th>
-                                        <th width="20%">Pengeluaran</th>
-                                        <th width="20%">Saldo</th>
+                                        <th width="20%">Tanggal</th>
+                                        <th width="20%">Keterangan</th>
+                                        <th width="30%">Pemasukan</th>
+                                        <th width="30%">Pengeluaran</th>
                                         <th width="10%">Tanda Bukti</th>
-                                        @role('tenant')
-                                        <th scope="col">Action</th>
-                                        @endrole
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($keuangan as $k)
+                                @foreach($labaRugi as $b)
                                     <tr>
-                                        <td>{{ date('d F Y', strtotime($k->tanggal)) }}</td>
-                                        <td>{{$k->keterangan}}</td> 
                                         <td>
-                                        @if($k->jenis == 1)
-                                        {{ "Rp " . number_format($k->jumlah,2,',','.') }}
-                                        @endif
-                                        </td> 
-                                        <td>
-                                        @if($k->jenis == 0)
-                                        {{ "Rp " . number_format($k->jumlah,2,',','.') }}
-                                        @endif
-                                        </td>  
-                                        @if($k->jenis == 1)
-                                        <td>{{"Rp " . number_format($k->jumlah,2,',','.') }}</td>
-                                        @else
-                                        <td>{{"Rp " . "- " . number_format($k->jumlah,2,',','.') }}</td>
-                                        @endif
-                                        <td>
+                                            {{ date('d F Y', strtotime($b->tanggal)) }}
                                         </td>
-                                        
+                                        <td>
+                                            <p>{{ $b->keterangan }}</p>
+                                        </td>
+                                        <td>
+                                            @if($b->jenis == 1)
+                                            {{ "Rp " . number_format($b->jumlah,2,',','.') }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($b->jenis == 0)
+                                            {{ "Rp " . number_format($b->jumlah,2,',','.') }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <img src="{{ asset('img/keuangan/'. $b->foto ) }}" width="150" height="100" alt="">
+                                        </td>
                                     </tr>
                                 @endforeach       
                                 </tbody>
                                 <tfoot>
-                                <tr>
-                                        <td colspan="2"><b><h4>Total</h4></b></td>
-                                        <td><b>{{"Rp " . number_format($total_masuk,2,',','.') }}</b></td>
-                                        <td><b>{{"Rp " . number_format($total_keluar,2,',','.') }}</b></td>
-                                        <td><b>{{"Rp " . number_format($total,2,',','.') }}</b></td>
+                                    <tr>
+                                        <td colspan="2"><b>
+                                                <h5>Jumlah Beban Usaha</h5>
+                                            </b></td>
+                                        <td><b>{{"Rp " . number_format($masuk_labaRugi,2,',','.') }}</b></td>
+                                        <td><b>{{"Rp " . number_format($keluar_labaRugi,2,',','.') }}</b></td>
                                         <td></td>
-                                    </tr> 
-
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">
+                                        <b>
+                                            <h5>Laba Bersih</h5>
+                                        </b>
+                                        </td>
+                                        <td><b>{{"Rp " . number_format($totalLaba,2,',','.') }}</b></td>
+                                        <td></td>
+                                    </tr>
                                 </tfoot>
                             </table>
                         </div>
@@ -286,7 +290,7 @@
 
     function filterResults () {
         let tenantIds = getIds("tenant");
-        let href = 'keuangan?';
+        let href = 'labaRugi?';
 
         if(tenantIds.length) {
             href += 'filter[tenant]=' + tenantIds;
@@ -309,8 +313,8 @@
     }
 </script>
 <script>
-        var arusMasuk = <?php echo json_encode($arusMasuk)?>;
-        var arusKeluar = <?php echo json_encode($arusKeluar)?>;
+        var labaMasuk = <?php echo json_encode($labaMasuk)?>;
+        var labaKeluar = <?php echo json_encode($labaKeluar)?>;
         Highcharts.chart('chartKeuangan', {
             chart: {
                 type: 'column'
@@ -348,8 +352,8 @@
                 }
             },
 			series: [{
-				name: 'Arus Kas Masuk',
-				data: arusMasuk,
+				name: 'Penghasilan',
+				data: labaMasuk,
 				label: {
 					show: false,
 					color: '#0168c1'
@@ -366,8 +370,8 @@
 					}
                 }
             },{
-				name: 'Arus Kas Keluar',
-				data: arusKeluar,
+				name: 'Beban',
+				data: labaKeluar,
 				label: {
 					show: false,
 					color: '#0168c1'

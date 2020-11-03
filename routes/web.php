@@ -54,6 +54,7 @@ Route::group(['prefix' => 'inkubator', 'middleware' => ['role:inkubator']], func
 	Route::get('/keuangan', 'keuangan\KeuanganController@indexInkubator')->name('inkubator.keuangan');
 	Route::get('/keuangan/filter', 'Keuangan\KeuanganController@inkubatorFilter')->name('inkubator.filter');
 	
+
 	Route::get('/pencapaian', 'Pencapaian\PencapaianController@index')->name('inkubator.pencapaian');
 	Route::get('/laporan', 'Laporan\LaporanController@index')->name('inkubator.laporan');
 	Route::get('/chat', 'Chat\ChatController@index')->name('inkubator.chat');
@@ -129,8 +130,10 @@ Route::group(['prefix' => 'mentor', 'middleware' => ['role:mentor']], function (
 	Route::get('/', 'Mentor\HomeController@index')->name('mentor.home');
 	Route::get('/chat', 'Chat\ChatController@index')->name('mentor.chat');
 	// Route Keuangan Mentor
-	Route::get('/arus-kas', 'Keuangan\KeuanganController@indexMentor')->name('mentor.arus');
-	Route::get('/filter-arus', 'Keuangan\KeuanganController@mentorFilter')->name('mentor.filter-arus');
+	Route::get('/arus-kas', 'Keuangan\KeuanganController@indexMentorKas')->name('mentor.arus');
+	Route::get('/filter-arus', 'Keuangan\KeuanganController@mentorFilterKas')->name('mentor.filter-arus');
+	Route::get('/laba-rugi', 'Keuangan\KeuanganController@indexMentorLaba')->name('mentor.laba');
+	Route::get('/filter-laba', 'Keuangan\KeuanganController@mentorFilterLaba')->name('mentor.filter-laba');
 
 	//route surat mentor
 	Route::get('/suratmasuk', 'Persuratan\DisposisiController@mentorsuratmasuk');
