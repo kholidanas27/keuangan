@@ -59,12 +59,11 @@
 			<div class="card-body">
                 <div class="form-group">
                 @role(['inkubator'])
-                <form action="{{ route('inkubator.filter') }}" method="GET" class="form-group">
+                <form action="{{ route('inkubator.filter-laba') }}" method="GET" class="form-group">
                 @endrole
                 @role(['mentor'])
                 <form action="{{ route('mentor.filter-laba') }}" method="GET" class="form-group">
                 @endrole
-                    {{ csrf_field() }}
                     <select style="cursor:pointer;margin-top:1.5em;margin-bottom:1.5em;" class="form-control" id="tag_select" name="month">
                         <option value="0" selected disabled> Pilih Bulan</option>
                         <option value="01"> Januari</option>
