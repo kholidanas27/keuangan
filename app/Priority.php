@@ -26,4 +26,8 @@ class Priority extends Model
     {
         return $this->hasMany('App\Pengumuman');
     }
+    public function tenant()
+    {
+        return $this->hasMany('App\Tenant');
+    }
 }

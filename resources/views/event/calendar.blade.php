@@ -57,6 +57,7 @@
 		</div>
 	</div>
 </div>
+@role('inkubator')
 <!-- Modal -->
 <div class="modal fade" id="inputModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -167,6 +168,7 @@
 </div>
 
 <!-- Modal end -->
+@endrole
 @endsection
 @section('css')
 	<meta name="csrf-token" content="{{ csrf_token() }}" />

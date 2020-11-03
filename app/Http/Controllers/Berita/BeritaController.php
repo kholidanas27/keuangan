@@ -210,7 +210,7 @@ class BeritaController extends Controller
         $umum = Berita::with('profil_user')->where('inkubator_id','0')->orderBy('created_at','desc')->paginate(5);
 
         return view('berita.showBerita', compact('berita','umum','komentar','total_komentar','total_like'));
-      
+
     }
 
     public function showT($slug)

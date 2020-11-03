@@ -15,16 +15,17 @@
 
                             </li>
 
-                            <li class="Ul_li--hover"><a class="" href="#"><i class="i-Administrator text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Pendamping</span></a>
+                            <li class="Ul_li--hover"><a class="" href="{{ route('tenant.mentor') }}"><i class="i-Administrator text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Pendamping</span></a>
 
 
                             </li>
-                            <li class="Ul_li--hover"><a class="" href="#"><i class="i-Suitcase text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Produk</span></a>
+                            <li class="Ul_li--hover">
+                                <a class="" href="{{route('tenant.produk')}}"><i class="i-Suitcase text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Produk</span></a>
                             </li>
                             <li class="Ul_li--hover"><a class="" href="#"><i class="i-Computer-Secure text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Aktifitas</span></a>
                             </li>
                             <!--  <p class="main-menu-title text-muted ml-3 font-weight-700 text-13 mt-4 mb-2">UI Elements</p> -->
-                            <li class="Ul_li--hover"><a class="" href="{{ route('tenant.keuangan')}}"><i class="i-Computer-Secure text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Keuangan</span></a>
+                            <li class="Ul_li--hover"><a class="" href="#"><i class="i-Computer-Secure text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Keuangan</span></a>
                             </li>
 
                             <li class="Ul_li--hover"><a class="" href="#"><i class="i-File-Clipboard-File--Text text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Pencapaian</span></a>

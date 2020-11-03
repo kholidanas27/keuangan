@@ -34,7 +34,6 @@ class PengumumanController extends Controller
         $kategori = DB::table('priority')->get();
         $inkubator = DB::table('inkubator')->get();
         return view('pengumuman.index', compact('pengumuman', 'kategori', 'inkubator'));
-        
     }
 
     public function tenant()

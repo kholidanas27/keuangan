@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers\Auth;
 
@@ -30,22 +30,22 @@ class RegisterController extends Controller
      * @var string
      */
     //protected $redirectTo = RouteServiceProvider::HOME;
-	protected function authenticated(Request $request, $user)
-	{
-		if ( $user->hasRole('admin') ) {// do your magic here
-			return redirect()->route('admin.home');
-		}elseif($user->hasRole('inkubator')){
-			return redirect()->route('inkubator.home');
-		}elseif($user->hasRole('mentor')){
-			return redirect()->route('mentor.home');
-		}elseif($user->hasRole('tenant')){
-			return redirect()->route('tenant.home');
-		}elseif($user->hasRole('user')){
-			return redirect()->route('user.home');
-		}
+    protected function authenticated(Request $request, $user)
+    {
+        if ($user->hasRole('admin')) { // do your magic here
+            return redirect()->route('admin.home');
+        } elseif ($user->hasRole('inkubator')) {
+            return redirect()->route('inkubator.home');
+        } elseif ($user->hasRole('mentor')) {
+            return redirect()->route('mentor.home');
+        } elseif ($user->hasRole('tenant')) {
+            return redirect()->route('tenant.home');
+        } elseif ($user->hasRole('user')) {
+            return redirect()->route('user.home');
+        }
 
-	 return redirect('/home');
-	}
+        return redirect('/home');
+    }
     /**
      * Create a new controller instance.
      *
@@ -80,20 +80,19 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         // return User::create([
-            // 'name' => $data['name'],
-            // 'email' => $data['email'],
-            // 'password' => Hash::make($data['password']),
+        // 'name' => $data['name'],
+        // 'email' => $data['email'],
+        // 'password' => Hash::make($data['password']),
         // ]);
-		$user = config('roles.models.defaultUser')::create([
+        $user = config('roles.models.defaultUser')::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
 
-        $role = config('roles.models.role')::where('name', '=', 'User')->first();  //choose the default role upon user creation.
+        $role = config('roles.models.role')::where('name', '=', 'Mentor')->first();  //choose the default role upon user creation.
         $user->attachRole($role);
 
         return $user;
-		
     }
 }

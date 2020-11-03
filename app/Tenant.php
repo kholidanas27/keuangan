@@ -16,4 +16,9 @@ class Tenant extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    public function priority()
+    {
+        return $this->belongsTo('App\Priority');
+    }
 }

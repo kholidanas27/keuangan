@@ -11,8 +11,12 @@
 	<div class="col-lg-12 col-md-12 mb-4">
 		<div class="card">
 			<div class="card-body">
+			@role('admin')
 			<a href="{{route('admin.inkubator.view','grid')}}">Grid</a>
 			<a href="{{route('admin.inkubator.view','list')}}">List</a>
+			@endrole
+			<a href="{{route('inkubator.mentor')}}">Grid</a>
+			<a href="{{route('inkubator.inkubator.view','list')}}">List</a>
 			<button class="btn btn-primary btn-md m-1" type="button" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="i-Add-User text-white mr-2"></i> Add Contact</button>
 			</div>
 		</div>

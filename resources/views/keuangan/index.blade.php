@@ -128,12 +128,6 @@
                             </td>
                         </tr>
                         @endforeach
-                        <tr>
-                            <td colspan="2"><b><h5>Total</h5></b></td>
-                            <td><b>{{"Rp " . number_format($total_masuk,2,',','.') }}</b></td>
-                            <td><b>{{"Rp " . number_format($total_keluar,2,',','.') }}</b></td>
-                            <td colspan="2"><b>{{"Rp " . number_format($total,2,',','.') }}</b></td>
-                        </tr>
 
                     </tbody>
                 </table>
@@ -196,16 +190,14 @@
                         @endforeach
                         <tr>
                             <td colspan="2"><b>
-                                    <h5>Jumlah Beban Usaha</h5>
+                                    <h4>Jumlah</h4>
                                 </b></td>
                             <td><b>{{"Rp " . number_format($masuk_labaRugi,2,',','.') }}</b></td>
                             <td><b>{{"Rp " . number_format($keluar_labaRugi,2,',','.') }}</b></td>
                         </tr>
                         <tr>
                             <td colspan="3">
-                            <b>
-                                <h5>Laba Bersih</h5>
-                            </b>
+                                <h4>Laba Bersih</h4>
                             </td>
                             <td><b>{{"Rp " . number_format($totalLaba,2,',','.') }}</b></td>
                         </tr>

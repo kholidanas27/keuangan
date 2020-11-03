@@ -81,7 +81,7 @@
         <script src="{{ asset('theme/js/plugins/sweetalert2.min.js') }}"></script>
         <script src="{{ asset('theme/js/plugins/sweetalert2.script.min.js') }}"></script>
         <script src="{{ asset('theme/js/plugins/toastr.min.js') }}"></script>
-        <script src="{{ asset('theme/js/script/toastr.script.min.js') }}"></script>
+        <script src="{{ asset('theme/js/scripts/toastr.script.min.js') }}"></script>
 		@yield('js')
 
 		<script>

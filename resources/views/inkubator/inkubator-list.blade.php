@@ -11,8 +11,13 @@
 	<div class="col-lg-12 col-md-12 mb-4">
 		<div class="card">
 			<div class="card-body">
+			@role('admin')
 			<a href="{{route('admin.inkubator.view','grid')}}">Grid</a>
 			<a href="{{route('admin.inkubator.view','list')}}">List</a>
+			@endrole
+			
+			<a href="{{route('inkubator.mentor')}}">Grid</a>
+			<a href="{{route('inkubator.inkubator.view','list')}}">List</a>
 			<button class="btn btn-primary btn-md m-1" type="button" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="i-Add-User text-white mr-2"></i> Add Contact</button>
 			</div>
 		</div>
@@ -40,7 +45,7 @@
 			<td><a href="">
 					<div class="ul-widget-app__profile-pic"><img class="profile-picture avatar-sm mb-2 rounded-circle img-fluid" src="{{ asset('theme/images/faces/1.jpg')}}" alt="" /> Jhon Wick</div>
 				</a></td>
-			<td>jhonwick_23@gmail.com</td>
+			<td>roodeybaddbanged@gmail.com</td>
 			<td>+88012378478</td>
 			<td><a class="badge badge-primary m-2 p-2" href="#">Developer</a></td>
 			<td>20</td>

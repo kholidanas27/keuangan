@@ -18,4 +18,9 @@ class TenantUser extends Model
         return $this->belongsTo('App\Tenant');
     }
 
+    public function profilUser()
+    {
+    	return $this->belongsTo('App\ProfilUser','user_id','user_id');
+    }
+
 }

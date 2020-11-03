@@ -2,7 +2,7 @@
 @section('content')
 <form action="{{ route('inkubator.storeBerita') }}" method="post" enctype="multipart/form-data" >
 @csrf
-	<div class="row"> 
+	<div class="row">
 		<div class="col-xl-8 col-lg-8">
 			<div class="card">
 				<div class="card-header container-fluid">
@@ -32,7 +32,7 @@
 			<div class="card mb-4">
 				<div class="card-header container-fluid">
 					<h3>Lainnya</h3>
-				</div>	
+				</div>
 				<div class="card-body">
 					<div class="ul-widget__body">
 						<div class="form-group">

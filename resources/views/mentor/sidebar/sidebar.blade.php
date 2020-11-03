@@ -14,19 +14,14 @@
                             <li class="Ul_li--hover"><a class="" href="#"><i class="i-Administrator text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Tenant</span></a>
 
                             </li>
-                            <li class="Ul_li--hover"><a class="" href="#"><i class="i-Administrator text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Pendamping</span></a>
+                            <li class="Ul_li--hover"><a class="" href="{{ route('mentor.profile-mentor') }}"><i class="i-Administrator text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Profile</span></a>
 
 
                             </li>
-                            <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-Suitcase text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Produk</span></a>
+                            <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-File-Horizontal-Text text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Keuangan</span></a>
                                 <ul class="mm-collapse">
-                                    <li class="item-name"><a href="image.cropper.html"><i class="nav-icon i-Crop-2"></i><span class="item-name">Image Cropper</span></a></li>
-                                    <li class="item-name"><a href="loaders.html"><i class="nav-icon i-Loading-3"></i><span class="item-name">Loaders</span></a></li>
-                                    <li class="item-name"><a href="ladda.button.html"><i class="nav-icon i-Loading-2"></i><span class="item-name">Ladda Buttons</span></a></li>
-                                    <li class="item-name"><a href="toastr.html"><i class="nav-icon i-Bell"></i><span class="item-name">Toastr</span></a></li>
-                                    <li class="item-name"><a href="sweet.alerts.html"><i class="nav-icon i-Approved-Window"></i><span class="item-name">Sweet Alerts</span></a></li>
-                                    <li class="item-name"><a href="tour.html"><i class="nav-icon i-Plane"></i><span class="item-name">User Tour</span></a></li>
-                                    <li class="item-name"><a href="upload.html"><i class="nav-icon i-Data-Upload"></i><span class="item-name">Upload</span></a></li>
+                                    <li class="item-name"><a href="{{route('mentor.arus')}}"><i class="nav-icon i-Error-404-Window"></i><span class="item-name">Arus Kas</span></a></li>
+                                    <li class="item-name"><a href="{{route('mentor.laba')}}"><i class="nav-icon i-Male"></i><span class="item-name">Laba Rugi</span></a></li>
                                 </ul>
                             </li>
                             <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-Computer-Secure text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Aktifitas</span></a>
@@ -61,12 +56,16 @@
                                 </ul>
                             </li>
                             <!--  <p class="main-menu-title text-muted ml-3 font-weight-700 text-13 mt-4 mb-2">UI Elements</p> -->
-                            <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-File-Horizontal-Text text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Keuangan</span></a>
+                            <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-Computer-Secure text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Keuangan</span></a>
                                 <ul class="mm-collapse">
-                                    <li class="item-name"><a href="{{ route('mentor.arus') }}"><i class="nav-icon i-Error-404-Window"></i><span class="item-name">Arus Kas</span></a></li>
-                                    <li class="item-name"><a href="{{ route('mentor.laba') }}"><i class="nav-icon i-Error-404-Window"></i><span class="item-name">Laba Rugi</span></a></li>
+                                    <li class="item-name"><a href="widget-card.html"><i class="nav-icon i-Receipt-4"></i><span class="item-name">widget card</span></a></li>
+                                    <li class="item-name"><a href="widgets-statistics.html"><i class="nav-icon i-Receipt-4"></i><span class="item-name">widget statistics</span></a></li>
+                                    <li class="item-name"><a href="widget-list.html"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Widget List</span></a></li>
+                                    <li class="item-name"><a href="widget-app.html"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Widget App </span></a></li>
+                                    <li class="item-name"><a href="weather-card.html"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Weather App </span></a></li>
                                 </ul>
                             </li>
+
                             <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-File-Clipboard-File--Text text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Produksi</span></a>
                                 <ul class="mm-collapse">
                                     <li class="item-name"><a href="form.basic.html"><i class="nav-icon i-File-Clipboard-Text--Image"></i><span class="item-name">Basic Elements</span></a></li>
