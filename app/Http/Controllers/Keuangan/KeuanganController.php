@@ -669,8 +669,18 @@ class KeuanganController extends Controller
         $label = [
             'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
         ];
+        $tenant = DB::table('tenant_user')
+            ->join('users', 'tenant_user.user_id', '=', 'users.id')
+            ->join('tenant', 'tenant_user.tenant_id', '=', 'tenant.id')            
+            ->select('users.id', 'tenant_user.*', 'tenant.*')
+            ->where([
+                ['user_id', \Auth::user()->id]
+            ])
+            ->get();
+        // dd($tenant);
         // DATA TABLE ARUS KAS
         $users = DB::table('users')->get();
+        // dd($users);
 
         $keuangan = DB::table('tenant_user')
             ->join('arus_kas', 'tenant_user.tenant_id', '=', 'arus_kas.tenant_id')
@@ -681,7 +691,7 @@ class KeuanganController extends Controller
             ])
             ->whereMonth('tanggal', date('m'))
             ->get();
-
+            // dd($keuangan);
         // Menampilkan Data Keuangan Pada Bagian Grafik
         $categories = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
         for($bulan=1;$bulan < 13;$bulan++){
@@ -716,7 +726,7 @@ class KeuanganController extends Controller
             ->join('tenant_user', 'users.id', '=', 'tenant_user.user_id')
             ->select('users.*', 'tenant_user.*')
             ->get();
-
+        // dd($user);
         // Menghitung Totalan Pada Bagian Table
         $total_masuk = 0;
         $total_keluar = 0;
@@ -788,7 +798,8 @@ class KeuanganController extends Controller
             'masuk_labaRugi',
             'keluar_labaRugi',
             'label',
-            'userId'
+            'userId',
+            'tenant'
         ));
     }
 

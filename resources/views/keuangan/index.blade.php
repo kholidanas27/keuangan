@@ -62,150 +62,182 @@
     <div class="col-lg-12 col-md-12">
         <div class="card mb-4">
             <div class="card-body">
-                <div class="card-title">Grafik Keuangan Seluruh Tenant</div>
+            @foreach($tenant as $i)
+                <div class="card-title">Grafik Keuangan {{ $i->title }}</div>
+            @endforeach
                 <div id="chartKeuangan" style="height: 300px;"></div>
             </div>
         </div>
     </div>
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header container-fluid">
-                <div class="row">
-                    <div class="col-md-10">
-                        <h3>Arus Kas</h3>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+        <div id="task-manager-list">
+            <!--  content area -->
+            <div class="content"> 
+                <!--  task manager table -->
+                <div class="card" id="card">
+                    <div class="card-header container-fluid">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <h3>Arus Kas</h3>
+                            </div>
+                            <div class="col-md-0">
+                                <a href="#"><button class="btn btn-primary custom-btn btn-sm ml-5" type="button" data-toggle="modal" data-target="#arusModal" name="create_record" id="create_record">Tambah Data</button></a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-0">
-                        <a href="#"><button class="btn btn-primary custom-btn btn-sm ml-5" type="button" data-toggle="modal" data-target="#arusModal" name="create_record" id="create_record">Tambah Data</button></a>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="display table" id="ul-contact-list" style="width:100%">
+                                <thead>
+                                <tr>
+                                    <th width="20%">Tanggal</th>
+                                    <th width="15%">Keterangan</th>
+                                    <th width="15%">Pemasukan</th>
+                                    <th width="15%">Pengeluaran</th>
+                                    <th width="15%">Saldo</th>
+                                    <th width="10%">Foto</th>
+                                    <th width="10%">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($keuangan as $k)
+                                    <tr>
+                                        <td>{{ date('d F Y', strtotime($k->tanggal)) }}</td>
+                                        <td>{{$k->keterangan}}</td> 
+                                        <td>
+                                        @if($k->jenis == 1)
+                                        {{ "Rp " . number_format($k->jumlah,2,',','.') }}
+                                        @endif
+                                        </td> 
+                                        <td>
+                                        @if($k->jenis == 0)
+                                        {{ "Rp " . number_format($k->jumlah,2,',','.') }}
+                                        @endif
+                                        </td>  
+                                        @if($k->jenis == 1)
+                                        <td>{{"Rp " . number_format($k->jumlah,2,',','.') }}</td>
+                                        @else
+                                        <td>{{"Rp " . "- " . number_format($k->jumlah,2,',','.') }}</td>
+                                        @endif
+                                        <td>
+                                            <img src="{{ asset('img/keuangan/'. $k->foto ) }}" width="150" height="100" alt="">
+                                        </td>
+                                        <td>
+                                            <a class="ul-link-action text-success" type="button" data-toggle="tooltip" href="{{ route('tenant.editArus-id', $k->id )}}" data-placement="top" title="Edit"><i class="i-Edit"></i>
+                                            <a class="ul-link-action text-danger mr-1 delete" href="{{ route('tenant.hapusArus-id', $k->id) }}" data-toggle="tooltip" data-placement="top" title="Want To Delete !!!">
+                                            <i class="i-Eraser-2"></i></a>
+                                        </td>
+                                    </tr>
+                                @endforeach       
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <td colspan="2"><b><h5>Total</h5></b></td>
+                                    <td><b>{{"Rp " . number_format($total_masuk,2,',','.') }}</b></td>
+                                    <td><b>{{"Rp " . number_format($total_keluar,2,',','.') }}</b></td>
+                                    <td colspan="2"><b>{{"Rp " . number_format($total,2,',','.') }}</b></td>
+                                    <td></td>
+                                </tr> 
+
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
+                <!--  end of task manager table -->
             </div>
-            <div class="card-body">
-                <table class="display table" id="ul-contact-list" style="width:100%;">
-                    <thead>
-                        <tr>
-                            <th width="20%">Tanggal</th>
-                            <th width="15%">Keterangan</th>
-                            <th width="15%">Pemasukan</th>
-                            <th width="15%">Pengeluaran</th>
-                            <th width="15%">Saldo</th>
-                            <th width="10%">Foto</th>
-                            <th width="10%">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($keuangan as $k)
-                        <tr>
-                            <td>
-                                {{ date('d F Y', strtotime($k->tanggal)) }}
-                            </td>
-                            <td>
-                                <p>{{ $k->keterangan }}</p>
-                            </td>
-                            <td>
-                                @if($k->jenis == 1)
-                                {{ "Rp " . number_format($k->jumlah,2,',','.') }}
-                                @endif
-                            </td>
-                            <td>
-                                @if($k->jenis == 0)
-                                {{ "Rp " . number_format($k->jumlah,2,',','.') }}
-                                @endif
-                            </td>
-                            <td>
-                                @if($k->jenis == 1)
-                                {{ "Rp " . number_format($k->jumlah,2,',','.') }}
-                                @else($k->jenis == 0)
-                                {{ "Rp " . number_format($k->jumlah,2,',','.') }}
-                                @endif
-                            </td>
-                            <td>
-                                <img src="{{ asset('img/keuangan/'. $k->foto ) }}" width="150" height="100" alt="">
-                            </td>
-                            <td>
-                                <a class="ul-link-action text-success" type="button" data-toggle="tooltip" href="{{ route('tenant.editArus-id', $k->id )}}" data-placement="top" title="Edit"><i class="i-Edit"></i>
-                                    <a class="ul-link-action text-danger mr-1 delete" href="{{ route('tenant.hapusArus-id', $k->id) }}" data-toggle="tooltip" data-placement="top" title="Want To Delete !!!">
-                                        <i class="i-Eraser-2"></i></a>
-                            </td>
-                        </tr>
-                        @endforeach
-
-                    </tbody>
-                </table>
-            </div>
+            <!--  end of content area -->
         </div>
     </div>
     &nbsp
     <div class="col-md-12">
-        <div class="card">
-            <div class="card-header container-fluid">
-                <div class="row">
-                    <div class="col-md-10">
-                        <h3>Laba Rugi</h3>
+        <div id="task-manager-list">
+            <!--  content area -->
+            <div class="content"> 
+                <!--  task manager table -->
+                <div class="card" id="card">
+                    <div class="card-header container-fluid">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <h3>Laba Rugi</h3>
+                            </div>
+                            <div class="col-md-0">
+                                <a href="#"><button class="btn btn-primary custom-btn btn-sm ml-5" type="button" data-toggle="modal" data-target="#labaModal" name="create_record" id="create_record">Tambah Data</button></a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-0">
-                        <a href="#"><button class="btn btn-primary custom-btn btn-sm ml-5" type="button" data-toggle="modal" data-target="#labaModal" name="create_record" id="create_record">Tambah Data</button></a>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="display table" id="ul-laba-list" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th width="20%">Tanggal</th>
+                                        <th width="20%">Keterangan</th>
+                                        <th width="20%">Pemasukan</th>
+                                        <th width="20%">Pengeluaran</th>
+                                        <th width="10%">Foto</th>
+                                        <th width="10%">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($labaRugi as $b)
+                                    <tr>
+                                        <td>
+                                            {{ date('d F Y', strtotime($b->tanggal)) }}
+                                        </td>
+                                        <td>
+                                            <p>{{ $b->keterangan }}</p>
+                                        </td>
+                                        <td>
+                                            @if($b->jenis == 1)
+                                            {{ "Rp " . number_format($b->jumlah,2,',','.') }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($b->jenis == 0)
+                                            {{ "Rp " . number_format($b->jumlah,2,',','.') }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <img src="{{ asset('img/keuangan/'. $b->foto ) }}" width="150" height="100" alt="">
+                                        </td>
+                                        <td>
+                                            <a class="ul-link-action text-success" type="button" data-toggle="tooltip" href="{{ route('tenant.editLaba-id', $b->id) }}" data-placement="top" title="Edit"><i class="i-Edit"></i>
+                                                <a class="ul-link-action text-danger mr-1 delete" href="{{ route('tenant.hapusLaba-id', $b->id) }}" data-toggle="tooltip" data-placement="top" title="Want To Delete !!!">
+                                                    <i class="i-Eraser-2"></i></a>
+                                        </td>
+                                    </tr>
+                                @endforeach       
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <td colspan="2"><b>
+                                            <h5>Jumlah Beban Usaha</h5>
+                                        </b></td>
+                                    <td><b>{{"Rp " . number_format($masuk_labaRugi,2,',','.') }}</b></td>
+                                    <td><b>{{"Rp " . number_format($keluar_labaRugi,2,',','.') }}</b></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <h5>Laba Bersih</h5>
+                                    </td>
+                                    <td><b>{{"Rp " . number_format($totalLaba,2,',','.') }}</b></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
+                <!--  end of task manager table -->
             </div>
-            <div class="card-body">
-                <table class="display table" id="ul-contact-list" style="width:100%;">
-                    <thead>
-                        <tr>
-                            <th width="20%">Tanggal</th>
-                            <th width="20%">Keterangan</th>
-                            <th width="20%">Pemasukan</th>
-                            <th width="20%">Pengeluaran</th>
-                            <th width="10%">Foto</th>
-                            <th width="10%">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($labaRugi as $b)
-                        <tr>
-                            <td>
-                                {{ date('d F Y', strtotime($b->tanggal)) }}
-                            </td>
-                            <td>
-                                <p>{{ $b->keterangan }}</p>
-                            </td>
-                            <td>
-                                @if($b->jenis == 1)
-                                {{ "Rp " . number_format($b->jumlah,2,',','.') }}
-                                @endif
-                            </td>
-                            <td>
-                                @if($b->jenis == 0)
-                                {{ "Rp " . number_format($b->jumlah,2,',','.') }}
-                                @endif
-                            </td>
-                            <td>
-                                <img src="{{ asset('img/keuangan/'. $b->foto ) }}" width="150" height="100" alt="">
-                            </td>
-                            <td>
-                                <a class="ul-link-action text-success" type="button" data-toggle="tooltip" href="{{ route('tenant.editLaba-id', $b->id) }}" data-placement="top" title="Edit"><i class="i-Edit"></i>
-                                    <a class="ul-link-action text-danger mr-1 delete" href="{{ route('tenant.hapusLaba-id', $b->id) }}" data-toggle="tooltip" data-placement="top" title="Want To Delete !!!">
-                                        <i class="i-Eraser-2"></i></a>
-                            </td>
-                        </tr>
-                        @endforeach
-                        <tr>
-                            <td colspan="2"><b>
-                                    <h4>Jumlah</h4>
-                                </b></td>
-                            <td><b>{{"Rp " . number_format($masuk_labaRugi,2,',','.') }}</b></td>
-                            <td><b>{{"Rp " . number_format($keluar_labaRugi,2,',','.') }}</b></td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                <h4>Laba Bersih</h4>
-                            </td>
-                            <td><b>{{"Rp " . number_format($totalLaba,2,',','.') }}</b></td>
-                        </tr>
-
-                    </tbody>
-                </table>
-
-            </div>
+            <!--  end of content area -->
         </div>
     </div>
 </div>
@@ -261,8 +293,8 @@
                         </div>
                         @endif
                     </div>
-                    <div class="input-group image-preview">
-                        <input type="text" class="form-control image-preview-filename" disabled="disabled" placeholder="Bukti Transaksi....">
+                    <div class="input-group " id="image-preview-arus">
+                        <input type="text" class="form-control" id="image-preview-filename-arus" disabled="disabled" placeholder="Bukti Transaksi....">
                         <span class="input-group-btn">
                             <!-- image-preview-clear button -->
                             <button type="button" class="btn btn-default image-preview-clear" style="display:none;">
@@ -271,7 +303,7 @@
                             <!-- image-preview-input -->
                             <div class="btn btn-default image-preview-input">
                                 <span class="glyphicon glyphicon-folder-open"></span>
-                                <span class="image-preview-input-title">Browse</span>
+                                <span id="image-preview-input-title-arus">Browse</span>
                                 <input type="file" class="custom-file-input @error('file') is-invalid @enderror" name="file" id="file" value="{{ old('foto') }}" /> <!-- rename it -->
                             </div>
                         </span>
@@ -345,8 +377,8 @@
                         </div>
                         @endif
                     </div>
-                    <div class="input-group image-preview-laba">
-                        <input type="text" class="form-control image-preview-filename" disabled="disabled" placeholder="Bukti Transaksi....">
+                    <div class="input-group" id="image-preview-laba">
+                        <input type="text" class="form-control" id="image-preview-filename-laba" disabled="disabled" placeholder="Bukti Transaksi....">
                         <span class="input-group-btn">
                             <!-- image-preview-clear button -->
                             <button type="button" class="btn btn-default image-preview-clear" style="display:none;">
@@ -355,8 +387,8 @@
                             <!-- image-preview-input -->
                             <div class="btn btn-default image-preview-input">
                                 <span class="glyphicon glyphicon-folder-open"></span>
-                                <span class="image-preview-input-title">Browse</span>
-                                <input type="file" class=" @error('file') is-invalid @enderror" name="file" id="file" value="{{ old('foto') }}" /> <!-- rename it -->
+                                <span id="image-preview-input-title-laba">Browse</span>
+                                <input type="file" class=" custom-file-input @error('file') is-invalid @enderror" name="file" id="file" value="{{ old('foto') }}" /> <!-- rename it -->
                             </div>
                         </span>
                     </div>
@@ -382,170 +414,100 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg=" crossorigin="anonymous" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
+<link href="{{asset('theme/css/main.css')}}" rel="stylesheet" />
+<link rel="stylesheet" href="{{asset('theme/css/plugins/datatables.min.css')}}" />
+<link rel="stylesheet" href="{{asset('theme/css/plugins/sweetalert2.min.css')}}" />
 <style>
-    .image-preview-input {
-        position: relative;
-        overflow: hidden;
-        margin: 0px;
-        color: #333;
-        background-color: #fff;
-        border-color: #ccc;
-    }
+.image-preview-input {
+    position: relative;
+	overflow: hidden;
+	margin: 0px;    
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;    
+}
+.image-preview-input input[type=file] {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	font-size: 20px;
+	cursor: pointer;
+	opacity: 0;
+	filter: alpha(opacity=0);
+}
 
-    .image-preview-input input[type=file] {
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin: 0;
-        padding: 0;
-        font-size: 20px;
-        cursor: pointer;
-        opacity: 0;
-        filter: alpha(opacity=0);
-    }
-
-    .image-preview-input-title {
-        margin-left: 2px;
-    }
+.image-preview-input-title {
+    margin-left:2px;
+}
 </style>
 @endsection
 @section('js')
-<script src="{{ asset('theme/js/plugins/echarts.min.js')}}"></script>
-<script src="{{ asset('theme/js/scripts/echart.options.min.js')}}"></script>
-<script src="{{ asset('theme/js/scripts/dashboard.v1.script.min.js')}}"></script>
-<script src="{{ asset('theme/js/scripts/customizer.script.min.js')}}"></script>
 <script src="{{asset('theme/js/plugins/datatables.min.js')}}"></script>
 <script src="{{asset('theme/js/scripts/contact-list-table.min.js')}}"></script>
 <script src="{{asset('theme/js/scripts/datatables.script.min.js')}}"></script>
 <script src="{{asset('theme/js/plugins/datatables.min.js')}}"></script>
 <script src="{{asset('theme/js/scripts/tooltip.script.min.js')}}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8=" crossorigin="anonymous"></script>
+<script src="{{asset('theme/js/extention/choices.js')}}"></script>
+<script src="{{ asset('theme/js/plugins/sweetalert2.min.js')}}"></script>
+<script src="{{ asset('theme/js/scripts/sweetalert2.script.min.js')}}"></script>
+<script src="https://cdn.ckeditor.com/4.13.0/standard/ckeditor.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="{{asset('theme/js/plugins/sweetalert2.min.js')}}"></script>
-<script src="{{asset('theme/js/scripts/sweetalert.script.js')}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8=" crossorigin="anonymous"></script>
+
 <script>
     window.setTimeout(function() {
-        $(".alert").fadeTo(500, 0).slideUp(500, function() {
-            $(this).remove();
-        });
-    }, 1500);
+		$(".alert").fadeTo(500, 0).slideUp(500, function() {
+			$(this).remove();
+		});
+	}, 1500);
+
     $('#ul-contact-list').DataTable({
-        responsive: true,
-        order: [
-            [2, 'DESC']
-        ]
-    });
-    $('#ul-labarugi-list').DataTable({
-        responsive: true,
-        order: [
-            [2, 'DESC']
-        ]
-    });
-</script>
-<script>
-    // <!-- MODAL ARUS KAS-->
+		responsive: true,
+	});
+    $('#ul-laba-list').DataTable({
+		responsive: true,
+	});
+    $('.delete').on("click", function(event) {
+		event.preventDefault();
+		const url = $(this).attr('href');
+		swal({
+			title: 'Apa Anda Yakin Menghapus ?',
+			text: "Anda tidak akan dapat mengembalikan data ini",
+			type: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#0CC27E',
+			cancelButtonColor: '#FF586B',
+			confirmButtonText: 'Hapus',
+			cancelButtonText: 'Batal',
+			confirmButtonClass: 'btn btn-success mr-5',
+			cancelButtonClass: 'btn btn-danger',
+			buttonsStyling: false
+		}).then(function(value) {
+			if (value) {
+				window.location.href = url;
+			}
+		});
+	});
+	// <!-- MODAL ARUS KAS-->
     $(document).ready(function() {
         @if(Session::has('errors'))
         $('#arusModal').modal('show');
         @endif
     });
-    $(".custom-file-input").on("change", function() {
-        var fileName = $(this).val().split("\\").pop();
-        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-    });
-    //JS FORM INPUT
-
-    $(document).on('click', '#close-preview', function() {
-        $('.image-preview').popover('hide');
-        // Hover befor close the preview
-        $('.image-preview').hover(
-            function() {
-                $('.image-preview').popover('show');
-            },
-            function() {
-                $('.image-preview').popover('hide');
-            }
-        );
-    });
-    $(function() {
-        // Create the close button
-        var closebtn = $('<button/>', {
-            type: "button",
-            text: 'x',
-            id: 'close-preview',
-            style: 'font-size: initial;',
-        });
-        closebtn.attr("class", "close pull-right");
-        // Set the popover default content
-        $('.image-preview').popover({
-            trigger: 'manual',
-            html: true,
-            title: "<strong>Preview</strong>" + $(closebtn)[0].outerHTML,
-            content: "There's no image",
-            placement: 'bottom'
-        });
-        // Clear event
-        $('.image-preview-clear').click(function() {
-            $('.image-preview').attr("data-content", "").popover('hide');
-            $('.image-preview-filename').val("");
-            $('.image-preview-clear').hide();
-            $('.image-preview-input input:file').val("");
-            $(".image-preview-input-title").text("Browse");
-        });
-        // Create the preview image
-        $(".image-preview-input input:file").change(function() {
-            var object = $('<object/>', {
-                id: 'dynamic',
-                width: 250,
-                height: 200
-            });
-            var file = this.files[0];
-            var reader = new FileReader();
-            // Set preview image into the popover data-content
-            reader.onload = function(e) {
-                $(".image-preview-input-title").text("Change");
-                $(".image-preview-clear").show();
-                $(".image-preview-filename").val(file.name);
-                object.attr('data', e.target.result);
-                $(".image-preview").attr("data-content", $(object)[0].outerHTML).popover("show");
-            }
-            reader.readAsDataURL(file);
-        });
-    });
-</script>
-<script>
     // <!-- MODAL LABA RUGI-->
     $(document).ready(function() {
         @if(Session::has('errors'))
         $('#labaModal').modal('show');
-        @endif
+    @endif
     });
-</script>
-<script>
-    $('.delete').on("click", function(event) {
-        event.preventDefault();
-        const url = $(this).attr('href');
-        swal({
-            title: 'Apa Anda Yakin Menghapus ?',
-            text: "Anda tidak akan dapat mengembalikan data ini",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#0CC27E',
-            cancelButtonColor: '#FF586B',
-            confirmButtonText: 'Hapus',
-            cancelButtonText: 'Batal',
-            confirmButtonClass: 'btn btn-success mr-5',
-            cancelButtonClass: 'btn btn-danger',
-            buttonsStyling: false
-        }).then(function(value) {
-            if (value) {
-                window.location.href = url;
-            }
-        });
-    });
-</script>
-<script>
+	$(".custom-file-input").on("change", function() {
+		var fileName = $(this).val().split("\\").pop();
+		$(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+	});
+
+    //GRAFIK
     var arusMasuk = <?php echo json_encode($arusMasuk) ?>;
     var arusKeluar = <?php echo json_encode($arusKeluar) ?>;
     var categories = <?php echo json_encode($categories) ?>;
@@ -554,12 +516,13 @@
             type: 'column'
         },
         legend: {
-            borderRadius: 0,
+            // verticalAlign: 'top',
+            // layout: 'vertical',
             x: 'right',
             data: ['Arus Kas Masuk', 'Arus Kas Keluar']
         },
         title: {
-            text: 'Alur Kas'
+            text: 'Arus Kas & Laba Rugi'
         },
         grid: {
             left: '8px',
@@ -618,6 +581,127 @@
             }
         }]
     });
+
+	//JS FORM INPUT ARUS KAS
+	
+	$(document).on('click', '#close-preview', function(){ 
+    $('#image-preview-arus').popover('hide');
+    // Hover befor close the preview
+    $('#image-preview-arus').hover(
+        function () {
+           $('#image-preview-arus').popover('show');
+        }, 
+         function () {
+           $('#image-preview-arus').popover('hide');
+        }
+    );    
+});
+
+$(function() {
+    // Create the close button
+    var closebtn = $('<button/>', {
+        type:"button",
+        text: 'x',
+        id: 'close-preview',
+        style: 'font-size: initial;',
+    });
+    closebtn.attr("class","close pull-right");
+    // Set the popover default content
+    $('#image-preview-arus').popover({
+        trigger:'manual',
+        html:true,
+        title: "<strong>Preview</strong>"+$(closebtn)[0].outerHTML,
+        content: "There's no image",
+        placement:'bottom'
+    });
+    // Clear event
+    $('.image-preview-clear').click(function(){
+        $('#image-preview-arus').attr("data-content","").popover('hide');
+        $('#image-preview-filename-arus').val("");
+        $('.image-preview-clear').hide();
+        $('.image-preview-input input:file').val("");
+        $("#image-preview-input-title-arus").text("Browse"); 
+    }); 
+    // Create the preview image
+    $(".image-preview-input input:file").change(function (){     
+        var object = $('<object/>', {
+            id: 'dynamic',
+            width:250,
+            height:200
+        });      
+        var file = this.files[0];
+        var reader = new FileReader();
+        // Set preview image into the popover data-content
+        reader.onload = function (e) {
+            $("#image-preview-input-title-arus").text("Change");
+            $(".image-preview-clear").show();
+            $("#image-preview-filename-arus").val(file.name);            
+            object.attr('data', e.target.result);
+            $("#image-preview-arus").attr("data-content",$(object)[0].outerHTML).popover("show");
+        }        
+        reader.readAsDataURL(file);
+    });  
+});
+
+     //JS FORM INPUT LABA RUGI
+    $(document).on('click', '#close-preview', function(){ 
+    $('#image-preview-laba').popover('hide');
+    // Hover befor close the preview
+    $('#image-preview-laba').hover(
+        function () {
+           $('#image-preview-laba').popover('show');
+        }, 
+         function () {
+           $('#image-preview-laba').popover('hide');
+        }
+    );    
+});
+
+$(function() {
+    // Create the close button
+    var closebtn = $('<button/>', {
+        type:"button",
+        text: 'x',
+        id: 'close-preview',
+        style: 'font-size: initial;',
+    });
+    closebtn.attr("class","close pull-right");
+    // Set the popover default content
+    $('#image-preview-laba').popover({
+        trigger:'manual',
+        html:true,
+        title: "<strong>Preview</strong>"+$(closebtn)[0].outerHTML,
+        content: "There's no image",
+        placement:'bottom'
+    });
+    // Clear event
+    $('.image-preview-clear').click(function(){
+        $('#image-preview-laba').attr("data-content","").popover('hide');
+        $('#image-preview-filename-laba').val("");
+        $('.image-preview-clear').hide();
+        $('.image-preview-input input:file').val("");
+        $("#image-preview-input-title-laba").text("Browse"); 
+    }); 
+    // Create the preview image
+    $(".image-preview-input input:file").change(function (){     
+        var object = $('<object/>', {
+            id: 'dynamic',
+            width:250,
+            height:200
+        });      
+        var file = this.files[0];
+        var reader = new FileReader();
+        // Set preview image into the popover data-content
+        reader.onload = function (e) {
+            $("#image-preview-input-title-laba").text("Change");
+            $(".image-preview-clear").show();
+            $("#image-preview-filename-laba").val(file.name);            
+            object.attr('data', e.target.result);
+            $("#image-preview-laba").attr("data-content",$(object)[0].outerHTML).popover("show");
+        }        
+        reader.readAsDataURL(file);
+    });  
+});
 </script>
 <script>
     $(function() {

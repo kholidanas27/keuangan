@@ -54,6 +54,7 @@
 </div><!-- end of main-content -->
 @endsection
 @section('css')
+<link rel="stylesheet" href="{{asset('theme/css/plugins/datatables.min.css')}}" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg=" crossorigin="anonymous" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
@@ -85,12 +86,16 @@
 </style>
 @endsection
 @section('js')
-<script src="{{asset('theme/js/scripts/tooltip.script.min.js')}}"></script>
+<script src="{{asset('theme/js/plugins/datatables.min.js')}}"></script>
+<script src="{{asset('theme/js/scripts/contact-list-table.min.js')}}"></script>
+<script src="{{asset('theme/js/scripts/datatables.script.min.js')}}"></script>
+<script src="{{asset('theme/js/plugins/datatables.min.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8=" crossorigin="anonymous"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="{{asset('theme/js/plugins/sweetalert2.min.js')}}"></script>
 <script src="{{asset('theme/js/scripts/sweetalert.script.js')}}"></script>
+<script src="{{asset('theme/js/scripts/tooltip.script.min.js')}}"></script>
 <script>
     $(function() {
         $(".datepicker").datepicker({

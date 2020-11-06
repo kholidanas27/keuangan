@@ -223,7 +223,19 @@ Route::group(['prefix' => 'tenant', 'middleware' => ['role:tenant']], function (
 	Route::get('/pengumuman/nontenant', 'Tenant\TenantController@tenant')->name('tenant.non-tenant');
 	Route::get('/pengumuman/search', 'Tenant\TenantController@search')->name('tenant.search');
 	Route::get('/pengumuman/{slug}', 'Tenant\TenantController@show')->name('tenant.show');
-    Route::get('/kategori/{id}', 'Tenant\TenantController@kategori')->name('tenant.kategori-id');
+	Route::get('/kategori/{id}', 'Tenant\TenantController@kategori')->name('tenant.kategori-id');
+	// route keuangan tenant
+	Route::get('/keuangan', 'Keuangan\KeuanganController@indexTenant')->name('tenant.keuangan');
+	Route::get('/keuangan/tambah', 'Keuangan\KeuanganController@tambahArus')->name('tenant.tambahArus');
+	Route::post('/keuangan/store', 'Keuangan\KeuanganController@storeArus')->name('tenant.storeArus');
+	Route::get('/keuangan/edit/{id}', 'Keuangan\KeuanganController@editArus')->name('tenant.editArus-id');
+	Route::put('/keuangan/update/{id}', 'Keuangan\KeuanganController@updateArus')->name('tenant.updateArus-id');
+	Route::get('/keuangan/hapus/{id}', 'Keuangan\KeuanganController@hapusArus')->name('tenant.hapusArus-id');
+	Route::get('/pendapatan/tambah', 'Keuangan\KeuanganController@tambahLaba')->name('tenant.tambahLaba');
+	Route::post('/pendapatan/store', 'Keuangan\KeuanganController@storeLaba')->name('tenant.storeLaba');
+	Route::get('/pendapatan/edit/{id}', 'Keuangan\KeuanganController@editLaba')->name('tenant.editLaba-id');
+	Route::put('/pendapatan/update/{id}', 'Keuangan\KeuanganController@updateLaba')->name('tenant.updateLaba-id');
+	Route::get('/pendapatan/hapus/{id}', 'Keuangan\KeuanganController@hapusLaba')->name('tenant.hapusLaba-id');
 });
 
 Route::group(['prefix' => 'user', 'middleware' => ['role:user']], function () {
