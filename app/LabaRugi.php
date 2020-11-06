@@ -13,4 +13,12 @@ class LabaRugi extends Model
     {
         return $this->belongsTo('App\TenantUser');
     }
+    public function scopeDateBulan($query, $bulan)
+    {
+        return $query->whereMonth('tanggal', $bulan);
+    }
+    public function scopeDateTahun($query, $tahun)
+    {
+        return $query->whereYear('tanggal', $tahun);
+    }
 }
