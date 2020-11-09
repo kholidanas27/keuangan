@@ -27,32 +27,22 @@
 @endif
 <div class="row">
     <!-- ICON BG-->
-    <div class="col-lg-4 col-md-6 col-sm-6">
-        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-            <div class="card-body text-center"><i class="i-Add-User"></i>
-                <div class="content">
-                    <p class="text-muted">Kas Masuk</p>
-                    <p class="text-primary">{{"Rp " . number_format($total_masuk,2,',','.') }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4 col-md-6 col-sm-6">
-        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-            <div class="card-body text-center"><i class="i-Financial"></i>
-                <div class="content">
-                    <p class="text-muted">Kas Keluar</p>
-                    <p class="text-primary">{{"Rp ". number_format($total_keluar,2,',','.') }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4 col-md-6 col-sm-6">
+    <div class="col-lg-6 col-md-12 col-sm-12">
         <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
             <div class="card-body text-center"><i class="i-Money-2"></i>
-                <div class="content">
-                    <p class="text-muted">Saldo Kas</p>
-                    <p class="text-primary">{{"Rp " . number_format($total,2,',','.') }}</p>
+                <div class="col-md-12">
+                    <h5><b><p class="text-important">Saldo Kas Akhir</p></b></h5>
+                    <p class="text-important">{{"Rp ". number_format($saldo_kas,2,',','.') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-12 col-sm-12">
+        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+            <div class="card-body text-center"><i class="i-Financial"></i>
+                <div class="col-md-12">
+                <h5><b><p class="text-important">Laba Bersih Akhir</p></b></h5>
+                    <p class="text-important" >{{"Rp " . number_format($laba_bersih,2,',','.') }}</p>
                 </div>
             </div>
         </div>
@@ -63,7 +53,7 @@
         <div class="card mb-4">
             <div class="card-body">
             @foreach($tenant as $i)
-                <div class="card-title">Grafik Keuangan {{ $i->title }}</div>
+                <h5><div class="card-title text-important">Grafik Keuangan {{ $i->title }}</div></h5>
             @endforeach
                 <div id="chartKeuangan" style="height: 300px;"></div>
             </div>
@@ -80,8 +70,8 @@
                 <div class="card" id="card">
                     <div class="card-header container-fluid">
                         <div class="row">
-                            <div class="col-md-10">
-                                <h3>Arus Kas</h3>
+                            <div class="col-md-10 text-important">
+                                <h4>Arus Kas</h4>
                             </div>
                             <div class="col-md-0">
                                 <a href="#"><button class="btn btn-primary custom-btn btn-sm ml-5" type="button" data-toggle="modal" data-target="#arusModal" name="create_record" id="create_record">Tambah Data</button></a>
@@ -123,7 +113,7 @@
                                         <td>{{"Rp " . "- " . number_format($k->jumlah,2,',','.') }}</td>
                                         @endif
                                         <td>
-                                            <img src="{{ asset('img/keuangan/'. $k->foto ) }}" width="150" height="100" alt="">
+                                            <img src="{{ asset('img/keuangan/'. $k->foto ) }}" width="150" height="100" alt="" data-toggle="modal" data-target="#myModal" id="myImg">
                                         </td>
                                         <td>
                                             <a class="ul-link-action text-success" type="button" data-toggle="tooltip" href="{{ route('tenant.editArus-id', $k->id )}}" data-placement="top" title="Edit"><i class="i-Edit"></i>
@@ -161,8 +151,8 @@
                 <div class="card" id="card">
                     <div class="card-header container-fluid">
                         <div class="row">
-                            <div class="col-md-10">
-                                <h3>Laba Rugi</h3>
+                            <div class="col-md-10 text-important">
+                                <h4>Laba Rugi</h4>
                             </div>
                             <div class="col-md-0">
                                 <a href="#"><button class="btn btn-primary custom-btn btn-sm ml-5" type="button" data-toggle="modal" data-target="#labaModal" name="create_record" id="create_record">Tambah Data</button></a>
@@ -215,7 +205,7 @@
                                 <tfoot>
                                 <tr>
                                     <td colspan="2"><b>
-                                            <h5>Jumlah Beban Usaha</h5>
+                                            <h5>Jumlah</h5>
                                         </b></td>
                                     <td><b>{{"Rp " . number_format($masuk_labaRugi,2,',','.') }}</b></td>
                                     <td><b>{{"Rp " . number_format($keluar_labaRugi,2,',','.') }}</b></td>
@@ -409,6 +399,12 @@
         </div>
     </div>
 </div>
+<!-- Modal Bukti Transaksi -->
+<div id="myModal" class="modal">
+  <span class="close">&times;</span>
+  <img class="modal-content" id="img01">
+  <div id="caption"></div>
+</div>
 @endsection
 @section('css')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg=" crossorigin="anonymous" />
@@ -502,6 +498,27 @@
         $('#labaModal').modal('show');
     @endif
     });
+    // MODAL BUKTI TRANSAKSI
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the image and insert it inside the modal - use its "alt" text as a caption
+    var img = document.getElementById("myImg");
+    var modalImg = document.getElementById("img01");
+    var captionText = document.getElementById("caption");
+    img.onclick = function(){
+    modal.style.display = "block";
+    modalImg.src = this.src;
+    captionText.innerHTML = this.alt;
+    }
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() { 
+    modal.style.display = "none";
+    }
 	$(".custom-file-input").on("change", function() {
 		var fileName = $(this).val().split("\\").pop();
 		$(this).siblings(".custom-file-label").addClass("selected").html(fileName);
@@ -510,16 +527,19 @@
     //GRAFIK
     var arusMasuk = <?php echo json_encode($arusMasuk) ?>;
     var arusKeluar = <?php echo json_encode($arusKeluar) ?>;
+    var labaMasuk = <?php echo json_encode($labaMasuk) ?>;
+    var labaKeluar = <?php echo json_encode($labaKeluar) ?>;
+    var totalLabaBersih = <?php echo json_encode($totalLabaBersih) ?>;
     var categories = <?php echo json_encode($categories) ?>;
     Highcharts.chart('chartKeuangan', {
         chart: {
             type: 'column'
         },
         legend: {
-            // verticalAlign: 'top',
-            // layout: 'vertical',
-            x: 'right',
-            data: ['Arus Kas Masuk', 'Arus Kas Keluar']
+            verticalAlign: 'bottom',
+            layout: 'horizontal',
+            x: 'middle',
+            data: ['Arus Kas Masuk', 'Arus Kas Keluar', ,'Penghasilan', 'Beban Usaha', 'Laba Bersih']
         },
         title: {
             text: 'Arus Kas & Laba Rugi'
@@ -537,7 +557,7 @@
             min: 0,
             interval: 10000,
             axisLine: {
-                show: false
+                show: true
             },
             title: {
                 text: 'Jumlah Keuangan'
@@ -569,7 +589,61 @@
                 color: '#0168c1'
             },
             barGap: 0,
-            color: '#bcbbdd',
+            color: '#1E90FF',
+            smooth: true,
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowOffsetY: -2,
+                    shadowColor: 'rgba(0, 0, 0, 0.3)'
+                }
+            }
+        },{
+            name: 'Penghasilan',
+            data: labaMasuk,
+            label: {
+                show: false,
+                color: '#FF8C00'
+            },
+            barGap: 0,
+            color: '#FFA500',
+            smooth: true,
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowOffsetY: -2,
+                    shadowColor: 'rgba(0, 0, 0, 0.3)'
+                }
+            }
+        },{
+            name: 'Beban Usaha',
+            data: labaKeluar,
+            label: {
+                show: false,
+                color: '#FF8C00'
+            },
+            barGap: 0,
+            color: '#FF0000',
+            smooth: true,
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowOffsetY: -2,
+                    shadowColor: 'rgba(0, 0, 0, 0.3)'
+                }
+            }
+        },{
+            name: 'Laba Bersih',
+            data: totalLabaBersih,
+            label: {
+                show: false,
+                color: '#FF00FF'
+            },
+            barGap: 0,
+            color: '#FF00FF',
             smooth: true,
             itemStyle: {
                 emphasis: {

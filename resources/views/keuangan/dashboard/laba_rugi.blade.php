@@ -4,20 +4,10 @@
     <!-- ICON BG-->
     <div class="col-lg-4 col-md-6 col-sm-6">
         <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-            <div class="card-body text-center"><i class="i-Add-User"></i>
-                <div class="content">
-                    <p class="text-muted">Penghasilan</p>
-                    <p class="text-primary">{{"Rp " . number_format($masuk_labaRugi,2,',','.') }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4 col-md-6 col-sm-6">
-        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
             <div class="card-body text-center"><i class="i-Financial"></i>
-                <div class="content">
-                    <p class="text-muted">Beban</p>
-                    <p class="text-primary">{{"Rp ". number_format($keluar_labaRugi,2,',','.') }}</p>
+                <div class="col-md-12">
+                <h5><b><p class="text-important">Penghasilan</p></b></h5>
+                    <p class="text-important">{{"Rp " . number_format($masuk_labaRugi,2,',','.') }}</p>
                 </div>
             </div>
         </div>
@@ -25,9 +15,19 @@
     <div class="col-lg-4 col-md-6 col-sm-6">
         <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
             <div class="card-body text-center"><i class="i-Money-2"></i>
-                <div class="content">
-                    <p class="text-muted">Laba Bersih</p>
-                    <p class="text-primary">{{"Rp " . number_format($laba_bersih,2,',','.') }}</p>
+                <div class="col-md-12">
+                <h5><b><p class="text-important">Beban</p></b></h5>
+                    <p class="text-important">{{"Rp ". number_format($keluar_labaRugi,2,',','.') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6 col-sm-6">
+        <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+            <div class="card-body text-center"><i class="i-Financial"></i>
+                <div class="col-md-12">
+                <h5><b><p class="text-important">Laba Bersih Akhir</p></b></h5>
+                    <p class="text-important">{{"Rp " . number_format($laba_bersih,2,',','.') }}</p>
                 </div>
             </div>
         </div>
@@ -37,7 +37,7 @@
     <div class="col-lg-12 col-md-12">
         <div class="card mb-4">
             <div class="card-body">
-                <div class="card-title">Grafik Keuangan Seluruh Tenant</div>
+                <h5><div class="card-title text-important">Grafik Keuangan Seluruh Tenant</div></h5>
                 <div id="chartKeuangan" style="height: 300px;"></div>
             </div>
         </div>
@@ -52,7 +52,7 @@
 			<div class="card-header container-fluid">
 			  <div class="row">
 				<div class="col">
-				  <h3>Filter</h3>
+				  <h4>Filter</h4>
 				</div>
 			  </div>
             </div>
