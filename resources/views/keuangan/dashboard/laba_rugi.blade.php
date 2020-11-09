@@ -56,14 +56,9 @@
 				</div>
 			  </div>
             </div>
-			<div class="card-body">
+            <div class="card-body">
                 <div class="form-group">
-                @role(['inkubator'])
-                <form action="{{ route('inkubator.filter-laba') }}" method="GET" class="form-group">
-                @endrole
-                @role(['mentor'])
-                <form action="{{ route('mentor.filter-laba') }}" method="GET" class="form-group">
-                @endrole
+                    <!-- <input type="month" class="form-control" id="tag_select" name="month"/> -->
                     <select style="cursor:pointer;margin-top:1.5em;margin-bottom:1.5em;" class="form-control" id="tag_select" name="month">
                         <option value="0" selected disabled> Pilih Bulan</option>
                         <option value="01"> Januari</option>
@@ -79,6 +74,8 @@
                         <option value="11"> November</option>
                         <option value="12"> Desember</option>
                     </select>
+                </div>
+                <div class="form-group">
                     <select style="cursor:pointer;" class="form-control" id="tag_select" name="year">
                         <option value="0" selected disabled> Pilih Tahun</option>
                         <?php 
@@ -90,6 +87,8 @@
                         }
                         ?>
                     </select>
+                </div>
+                <div class="form-group">
                     <label for="tenant">Tenant</label>
                     @foreach ($tenant as $item)
                         <label class="checkbox checkbox-success">
@@ -99,10 +98,11 @@
                                 @endif/><span>{{ $item->title }}</span><span class="checkmark"></span>
                         </label>
                     @endforeach
-                    <input class="btn btn-primary" name="submit" type="submit" value="Filter"/>
-                </form>
                 </div>
-            </div>
+                <div class="form-group">
+                    <button id="filter" class="btn btn-primary">Filter</button>
+                </div>
+            </div>        
         </div>
         @endrole
 	</div>
@@ -289,10 +289,18 @@
 
     function filterResults () {
         let tenantIds = getIds("tenant");
-        let href = 'labaRugi?';
+        let bulan = $('select[name="month"]').val();
+        let tahun = $('select[name="year"]').val();
+        let href = 'laba-rugi?';
 
         if(tenantIds.length) {
             href += 'filter[tenant]=' + tenantIds;
+        }
+        if(bulan !== null) {
+            href += '&filter[bulan]=' + bulan;
+        }
+        if(tahun !== null) {
+            href += '&filter[tahun]=' + tahun;
         }
         console.log(href);
 
